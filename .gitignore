@@ -30,3 +30,16 @@
 *.exe
 *.out
 *.app
+.vs/
+**/.vs/
+x64/
+**/x64/
+Debug/
+**/Debug/
+Release/
+**/Release/
+*.vsidx
+*.db
+*.sqlite
+*.user
+*.vcxproj.user
