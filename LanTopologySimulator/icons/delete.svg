@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Ручка крышки корзины -->
+  <path d="M26 15 V12 C26 10.3 27.3 9 29 9 H35 C36.7 9 38 10.3 38 12 V15" 
+        stroke="#1E293B" 
+        stroke-width="2.5" 
+        stroke-linecap="round"/>
+
+  <!-- Крышка корзины (планка) -->
+  <rect x="14" y="15" width="36" height="5" rx="2.5" 
+        fill="#FFFFFF" 
+        stroke="#1E293B" 
+        stroke-width="2.5"/>
+
+  <!-- Основной корпус корзины -->
+  <path d="M18 20 L21.5 50 C21.8 52.2 23.7 54 26 54 H38 C40.3 54 42.2 52.2 42.5 50 L46 20 Z" 
+        fill="#FEF2F2" 
+        stroke="#1E293B" 
+        stroke-width="2.5" 
+        stroke-linejoin="round"/>
+
+  <!-- Вертикальные красные ребра удаления -->
+  <line x1="26" y1="26" x2="27.5" y2="47" stroke="#DC2626" stroke-width="2" stroke-linecap="round"/>
+  <line x1="32" y1="26" x2="32" y2="47" stroke="#DC2626" stroke-width="2" stroke-linecap="round"/>
+  <line x1="38" y1="26" x2="36.5" y2="47" stroke="#DC2626" stroke-width="2" stroke-linecap="round"/>
+</svg>

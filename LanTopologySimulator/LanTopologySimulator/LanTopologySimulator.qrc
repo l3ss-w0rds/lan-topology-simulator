@@ -1,4 +1,14 @@
 <RCC>
-    <qresource prefix="LanTopologySimulator">
-    </qresource>
+  <qresource prefix="LanTopologySimulator">
+    <file>play.svg</file>
+    <file>delete.svg</file>
+    <file>fault.svg</file>
+    <file>server.svg</file>
+    <file>cursor.svg</file>
+    <file>router.svg</file>
+    <file>switch.svg</file>
+    <file>cable.svg</file>
+    <file>check.svg</file>
+    <file>pc.svg</file>
+  </qresource>
 </RCC>

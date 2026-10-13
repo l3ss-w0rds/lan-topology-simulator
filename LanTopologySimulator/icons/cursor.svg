@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Тень/эффект глубины -->
+  <path d="M19 15 L19 49 L28 41 L38 55 L43 51 L33 37 L45 37 Z" fill="#E2E8F0"/>
+
+  <!-- Основная стрелка курсора -->
+  <path d="M16 12 L16 46 L25 38 L35 52 L40 48 L30 34 L42 34 Z" 
+        fill="#FFFFFF" 
+        stroke="#1E293B" 
+        stroke-width="2.5" 
+        stroke-linejoin="round"/>
+
+  <!-- Внутренний синий акцентный штрих -->
+  <path d="M20 19 L20 37 L25 33" stroke="#3B82F6" stroke-width="1.8" stroke-linecap="round"/>
+</svg>

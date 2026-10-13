@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Предупреждающий треугольник со скругленными углами -->
+  <path d="M28.5 11 C30.1 8.2 33.9 8.2 35.5 11 L56.5 46.5 C58.1 49.3 56.1 53 52.9 53 H11.1 C7.9 53 5.9 49.3 7.5 46.5 Z" 
+        fill="#FEF3C7" 
+        stroke="#1E293B" 
+        stroke-width="2.5" 
+        stroke-linejoin="round"/>
+
+  <!-- Аварийная молния по центру -->
+  <path d="M35 18 L24 33 H34 L28 47 L43 29 H32 L35 18 Z" 
+        fill="#DC2626" 
+        stroke="#1E293B" 
+        stroke-width="2" 
+        stroke-linejoin="round"/>
+</svg>
