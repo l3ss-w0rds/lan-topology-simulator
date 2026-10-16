@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>756</width>
-    <height>551</height>
+    <width>1059</width>
+    <height>722</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,7 +28,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <selectedon>:/LanTopologySimulator/pc.svg</selectedon>
+           <selectedon>:/LanTopologySimulator/icons/pc.svg</selectedon>
           </iconset>
          </property>
          <property name="iconSize">
@@ -46,7 +46,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <selectedon>:/LanTopologySimulator/server.svg</selectedon>
+           <selectedon>:/LanTopologySimulator/icons/server.svg</selectedon>
           </iconset>
          </property>
          <property name="iconSize">
@@ -64,7 +64,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <selectedon>:/LanTopologySimulator/switch.svg</selectedon>
+           <selectedon>:/LanTopologySimulator/icons/switch.svg</selectedon>
           </iconset>
          </property>
          <property name="iconSize">
@@ -82,7 +82,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <selectedon>:/LanTopologySimulator/router.svg</selectedon>
+           <selectedon>:/LanTopologySimulator/icons/router.svg</selectedon>
           </iconset>
          </property>
          <property name="iconSize">
@@ -129,7 +129,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>756</width>
+     <width>1059</width>
      <height>20</height>
     </rect>
    </property>
@@ -155,7 +155,7 @@
    </property>
    <property name="icon">
     <iconset resource="LanTopologySimulator.qrc">
-     <normaloff>:/LanTopologySimulator/cursor.svg</normaloff>:/LanTopologySimulator/cursor.svg</iconset>
+     <normaloff>:/LanTopologySimulator/icons/cursor.svg</normaloff>:/LanTopologySimulator/icons/cursor.svg</iconset>
    </property>
    <property name="text">
     <string>Курсор</string>
@@ -178,7 +178,7 @@
    </property>
    <property name="icon">
     <iconset resource="LanTopologySimulator.qrc">
-     <normaloff>:/LanTopologySimulator/cable.svg</normaloff>:/LanTopologySimulator/cable.svg</iconset>
+     <normaloff>:/LanTopologySimulator/icons/cable.svg</normaloff>:/LanTopologySimulator/icons/cable.svg</iconset>
    </property>
    <property name="text">
     <string>Кабель</string>
@@ -201,7 +201,7 @@
    </property>
    <property name="icon">
     <iconset resource="LanTopologySimulator.qrc">
-     <normaloff>:/LanTopologySimulator/fault.svg</normaloff>:/LanTopologySimulator/fault.svg</iconset>
+     <normaloff>:/LanTopologySimulator/icons/fault.svg</normaloff>:/LanTopologySimulator/icons/fault.svg</iconset>
    </property>
    <property name="text">
     <string>Сбой</string>
@@ -221,7 +221,7 @@
   <action name="actionFerify">
    <property name="icon">
     <iconset resource="LanTopologySimulator.qrc">
-     <normaloff>:/LanTopologySimulator/check.svg</normaloff>:/LanTopologySimulator/check.svg</iconset>
+     <normaloff>:/LanTopologySimulator/icons/check.svg</normaloff>:/LanTopologySimulator/icons/check.svg</iconset>
    </property>
    <property name="text">
     <string>Проверить решение</string>
@@ -238,7 +238,7 @@
   <action name="actionDrlrtr">
    <property name="icon">
     <iconset resource="LanTopologySimulator.qrc">
-     <normaloff>:/LanTopologySimulator/delete.svg</normaloff>:/LanTopologySimulator/delete.svg</iconset>
+     <normaloff>:/LanTopologySimulator/icons/delete.svg</normaloff>:/LanTopologySimulator/icons/delete.svg</iconset>
    </property>
    <property name="text">
     <string>Удалить</string>
@@ -258,7 +258,7 @@
   <action name="actionPlay">
    <property name="icon">
     <iconset resource="LanTopologySimulator.qrc">
-     <normaloff>:/LanTopologySimulator/play.svg</normaloff>:/LanTopologySimulator/play.svg</iconset>
+     <normaloff>:/LanTopologySimulator/icons/play.svg</normaloff>:/LanTopologySimulator/icons/play.svg</iconset>
    </property>
    <property name="text">
     <string>Запуск симуляции</string>
