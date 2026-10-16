@@ -2,7 +2,9 @@
 
 #include <QtWidgets/QMainWindow>
 #include <QGraphicsScene> //Управление большим колвом 2Д объектов
+#include <QtCore> //Для вывод времени 
 #include "ui_LanTopologySimulator.h"
+#include "NetworkDevice.h"
 
 class LanTopologySimulator : public QMainWindow
 {
@@ -19,5 +21,6 @@ private slots:
 private:
     Ui::LanTopologySimulatorClass ui;
 	QGraphicsScene* m_scene; //Сцена для отображения объектов
+	void logDeviceCreated(const NetworkDevice* device);
 };
 
