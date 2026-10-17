@@ -98,6 +98,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="NetworkDevice.cpp" />
+    <ClCompile Include="NodeItem.cpp" />
     <QtRcc Include="LanTopologySimulator.qrc" />
     <QtUic Include="LanTopologySimulator.ui" />
     <QtMoc Include="LanTopologySimulator.h" />
@@ -106,6 +107,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NetworkDevice.h" />
+    <ClInclude Include="NodeItem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

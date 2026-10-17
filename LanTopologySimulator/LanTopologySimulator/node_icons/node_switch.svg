@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <!-- Ножки свитча (в едином стиле с ПК и Сервером) -->
+  <line x1="11" y1="40" x2="17" y2="40" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+  <line x1="31" y1="40" x2="37" y2="40" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+  <line x1="14" y1="36" x2="14" y2="40" stroke="#475569" stroke-width="2"/>
+  <line x1="34" y1="36" x2="34" y2="40" stroke="#475569" stroke-width="2"/>
+
+  <!-- Основной корпус свитча -->
+  <rect x="6" y="11" width="36" height="25" rx="3" fill="#FFFFFF" stroke="#1E293B" stroke-width="2"/>
+
+  <!-- Внутренняя панель портов (мягкий изумрудный оттенок L2) -->
+  <rect x="9" y="14" width="30" height="19" rx="1.5" fill="#ECFDF5"/>
+
+  <!-- 4 индикатора активности сетевых портов -->
+  <circle cx="15" cy="18" r="1.2" fill="#10B981"/>
+  <circle cx="21" cy="18" r="1.2" fill="#10B981"/>
+  <circle cx="27" cy="18" r="1.2" fill="#10B981"/>
+  <circle cx="33" cy="18" r="1.2" fill="#10B981"/>
+
+  <!-- Встречные стрелки L2-коммутации кадров -->
+  <!-- Верхняя стрелка вправо -->
+  <path d="M15 23H33M29 20L33 23L29 26" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Нижняя стрелка влево -->
+  <path d="M33 28H15M19 25L15 28L19 31" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -43,9 +43,15 @@
     <ClCompile Include="NetworkDevice.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="NodeItem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NetworkDevice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

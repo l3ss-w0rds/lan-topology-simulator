@@ -3,6 +3,9 @@
 #include <QtWidgets/QMainWindow>
 #include <QGraphicsScene> //Управление большим колвом 2Д объектов
 #include <QtCore> //Для вывод времени 
+#include <QGraphicsEllipseItem> //Эллипс
+#include <QGraphicsTextItem> //Для текста на холсте
+#include <QFont> //Для размера и жирности
 #include "ui_LanTopologySimulator.h"
 #include "NetworkDevice.h"
 

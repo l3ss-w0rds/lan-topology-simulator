@@ -1,14 +1,18 @@
 <RCC>
-  <qresource prefix="LanTopologySimulator">
-    <file>icons/cable.svg</file>
-    <file>icons/check.svg</file>
-    <file>icons/cursor.svg</file>
-    <file>icons/delete.svg</file>
-    <file>icons/fault.svg</file>
-    <file>icons/pc.svg</file>
-    <file>icons/play.svg</file>
-    <file>icons/router.svg</file>
-    <file>icons/server.svg</file>
-    <file>icons/switch.svg</file>
-  </qresource>
+    <qresource prefix="/LanTopologySimulator">
+        <file>icons/cable.svg</file>
+        <file>icons/check.svg</file>
+        <file>icons/cursor.svg</file>
+        <file>icons/delete.svg</file>
+        <file>icons/fault.svg</file>
+        <file>icons/pc.svg</file>
+        <file>icons/play.svg</file>
+        <file>icons/router.svg</file>
+        <file>icons/server.svg</file>
+        <file>icons/switch.svg</file>
+        <file>node_icons/node_pc_device.svg</file>
+        <file>node_icons/node_router.svg</file>
+        <file>node_icons/node_server.svg</file>
+        <file>node_icons/node_switch.svg</file>
+    </qresource>
 </RCC>

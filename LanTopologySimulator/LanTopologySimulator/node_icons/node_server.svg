@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <!-- Ножки сервера (в том же стиле, что подставка ПК) -->
+  <line x1="13" y1="41" x2="19" y2="41" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+  <line x1="29" y1="41" x2="35" y2="41" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+  <line x1="16" y1="38" x2="16" y2="41" stroke="#475569" stroke-width="2"/>
+  <line x1="32" y1="38" x2="32" y2="41" stroke="#475569" stroke-width="2"/>
+
+  <!-- Основной корпус стойки (белый с темным контуром) -->
+  <rect x="8" y="7" width="32" height="31" rx="3" fill="#FFFFFF" stroke="#1E293B" stroke-width="2"/>
+
+  <!-- Разделитель между юнитами стойки -->
+  <line x1="8" y1="22.5" x2="40" y2="22.5" stroke="#1E293B" stroke-width="2"/>
+
+  <!-- Верхний юнит (отсек 1) -->
+  <rect x="11" y="10" width="26" height="9.5" rx="1.5" fill="#F5F3FF"/>
+  <!-- Слот накопителей -->
+  <line x1="14" y1="14.75" x2="25" y2="14.75" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Индикаторы питания и активности -->
+  <circle cx="30.5" cy="14.75" r="1.25" fill="#7C3AED"/>
+  <circle cx="34" cy="14.75" r="1.25" fill="#10B981"/>
+
+  <!-- Нижний юнит (отсек 2) -->
+  <rect x="11" y="25.5" width="26" height="9.5" rx="1.5" fill="#F5F3FF"/>
+  <!-- Слот накопителей -->
+  <line x1="14" y1="30.25" x2="25" y2="30.25" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Индикаторы питания и активности -->
+  <circle cx="30.5" cy="30.25" r="1.25" fill="#7C3AED"/>
+  <circle cx="34" cy="30.25" r="1.25" fill="#10B981"/>
+</svg>

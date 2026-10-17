@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <!-- Ножки базы (в едином стиле) -->
+  <line x1="12" y1="41" x2="16" y2="41" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+  <line x1="32" y1="41" x2="36" y2="41" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Две прямые вертикальные антенны по бокам (как на вашем референсе) -->
+  <line x1="11" y1="27" x2="11" y2="10" stroke="#1E293B" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="37" y1="27" x2="37" y2="10" stroke="#1E293B" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Компактный белый корпус базы снизу -->
+  <rect x="7" y="27" width="34" height="12" rx="2.5" fill="#FFFFFF" stroke="#1E293B" stroke-width="2"/>
+
+  <!-- Две продолговатые полоски индикаторов (как на картинке) -->
+  <rect x="12" y="32" width="6" height="2.5" rx="1.2" fill="#D97706"/>
+  <rect x="21" y="32" width="6" height="2.5" rx="1.2" fill="#10B981"/>
+
+  <!-- Волны раздачи сети / Wi-Fi по центру между антеннами -->
+  <!-- Нижняя точка-источник -->
+  <circle cx="24" cy="22" r="1.3" fill="#D97706"/>
+  <!-- Средняя дуга -->
+  <path d="M19 17 C20.5 14.5 27.5 14.5 29 17" stroke="#D97706" stroke-width="2" stroke-linecap="round"/>
+  <!-- Верхняя широкая дуга -->
+  <path d="M15.5 12 C18 7.5 30 7.5 32.5 12" stroke="#D97706" stroke-width="2" stroke-linecap="round"/>
+</svg>
