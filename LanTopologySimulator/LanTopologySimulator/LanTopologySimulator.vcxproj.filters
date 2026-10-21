@@ -21,38 +21,51 @@
       <UniqueIdentifier>{639EADAA-A684-42e4-A9AD-28FC9BCB8F7C}</UniqueIdentifier>
       <Extensions>ts</Extensions>
     </Filter>
+    <Filter Include="Model">
+      <UniqueIdentifier>{99fe565a-5b98-47a0-9201-533a132f0251}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics">
+      <UniqueIdentifier>{a8accc94-7c65-479d-8984-f7fc11622098}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{17a4af3f-be4e-4e41-9a93-eb72cdce246d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="LanTopologySimulator.qrc">
       <Filter>Resource Files</Filter>
     </QtRcc>
-    <QtUic Include="LanTopologySimulator.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
-    <QtMoc Include="LanTopologySimulator.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <ClCompile Include="LanTopologySimulator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="NetworkDevice.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Model\NetworkDevice.cpp">
+      <Filter>Model</Filter>
     </ClCompile>
-    <ClCompile Include="NodeItem.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Graphics\NodeItem.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\LanTopologySimulator.cpp">
+      <Filter>UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="NetworkDevice.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Model\NetworkDevice.h">
+      <Filter>Model</Filter>
     </ClInclude>
-    <ClInclude Include="NodeItem.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Graphics\NodeItem.h">
+      <Filter>Graphics</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="UI\LanTopologySimulator.h">
+      <Filter>UI</Filter>
+    </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="UI\LanTopologySimulator.ui">
+      <Filter>UI</Filter>
+    </QtUic>
   </ItemGroup>
 </Project>
