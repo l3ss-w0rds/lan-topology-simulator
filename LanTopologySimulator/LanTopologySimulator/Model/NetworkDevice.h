@@ -13,6 +13,7 @@ class NetworkDevice {
 public:
 	NetworkDevice(const QString& name, const QString& ip, DeviceType type);
 	virtual ~NetworkDevice() = default;
+
 	//Геттеры читают свойства объекта
 	QString getName() const {return m_name; }
 	QString getIP() const { return m_ip; }
@@ -35,3 +36,4 @@ private:
 	bool m_isOnline;
 
 };
+

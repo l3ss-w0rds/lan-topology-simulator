@@ -1,5 +1,5 @@
 #include "NodeItem.h"
-
+#include "CableItem.h"
 
 NodeItem::NodeItem(NetworkDevice* device, QGraphicsItem* parent)
     : QGraphicsItem(parent)
@@ -8,6 +8,8 @@ NodeItem::NodeItem(NetworkDevice* device, QGraphicsItem* parent)
     // Âêëþ÷àåì ôèçèêó ìûøè: òàñêàòü è âûäåëÿòü
     setFlag(QGraphicsItem::ItemIsMovable, true);
     setFlag(QGraphicsItem::ItemIsSelectable, true);
+    //Ïðîâîä òÿíåòñÿ çà óçëîì
+    setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
 }
 
 NodeItem::~NodeItem()
@@ -52,7 +54,7 @@ void NodeItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
     }
 
 
-        // ÐÈÑÓÅÌ ÍÀØÓ SVG-ÈÊÎÍÊÓ ÏÎ ÖÅÍÒÐÓ
+    // ÐÈÑÓÅÌ ÍÀØÓ SVG-ÈÊÎÍÊÓ ÏÎ ÖÅÍÒÐÓ
     QPixmap iconPixmap = QIcon(iconPath).pixmap(40, 40);
     painter->drawPixmap(-20, -20, iconPixmap);
 
@@ -72,4 +74,21 @@ void NodeItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
     painter->setFont(font);
     painter->setPen(QColor(100, 116, 139));
     painter->drawText(QRectF(-35, 34, 70, 10), Qt::AlignCenter, m_device->getIP());
+}
+
+void NodeItem::addCable(CableItem* cable)
+{
+    if (!cable) return;
+    if (!m_cables.contains(cable)) {
+        m_cables.append(cable);
+    }
+}
+
+QVariant NodeItem::itemChange(GraphicsItemChange change, const QVariant& value) {
+    if (change == ItemPositionChange || change == ItemPositionHasChanged) {
+        for(CableItem* cable : m_cables){
+			cable->trackNodes();
+        }
+    }
+	return QGraphicsItem::itemChange(change, value);
 }
