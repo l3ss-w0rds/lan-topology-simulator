@@ -8,7 +8,100 @@ LanTopologySimulator::LanTopologySimulator(QWidget *parent)
     : QMainWindow(parent)
 {
     ui.setupUi(this);
-	m_scene = new QGraphicsScene(this); //Создаем сцену для отобр объектов(белый лист)
+
+	this->setStyleSheet(R"(
+        /* Общий шрифт приложения */
+        QWidget {
+            font-family: 'Segoe UI', -apple-system, sans-serif;
+            font-size: 13px;
+        }
+
+        /* Боковая панель "Склад и управление" */
+        QGroupBox {
+            font-weight: bold;
+            font-size: 12px;
+            color: #475569;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            margin-top: 10px;
+            padding-top: 15px;
+            background-color: #FAFAFA;
+        }
+        QGroupBox::title {
+            subcontrol-origin: margin;
+            left: 10px;
+            padding: 0 5px;
+        }
+
+        /* Кнопки добавления устройств слева (ПК, Сервер, Коммутатор, Маршрутизатор) */
+        QPushButton {
+            background-color: #FFFFFF;
+            border: 1px solid #CBD5E1;
+            border-radius: 6px;
+            padding: 8px 14px;
+            color: #1E293B;
+            font-weight: 500;
+            text-align: left;
+            margin-bottom: 4px;
+        }
+        QPushButton:hover {
+            background-color: #F1F5F9;
+            border-color: #94A3B8;
+            color: #0F172A;
+        }
+        QPushButton:pressed {
+            background-color: #E2E8F0;
+        }
+
+        /* Верхняя панель инструментов (Toolbar) */
+        QToolBar {
+            background: #FFFFFF;
+            border-bottom: 1px solid #E2E8F0;
+            padding: 4px;
+            spacing: 6px;
+        }
+        QToolButton {
+            border: 1px solid transparent;
+            border-radius: 6px;
+            padding: 6px;
+            background-color: transparent;
+        }
+        QToolButton:hover {
+            background-color: #F1F5F9;
+            border: 1px solid #CBD5E1;
+        }
+        /* Когда инструмент (например, Кабель) нажат/активен */
+        QToolButton:checked {
+            background-color: #EFF6FF;
+            border: 1px solid #3B82F6;
+        }
+
+        /* Окно журнала событий (Лог) */
+        QPlainTextEdit {
+            background-color: #F8FAFC;
+            color: #334155;
+            font-family: 'Consolas', 'Cascadia Code', monospace;
+            font-size: 12px;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            padding: 8px;
+        }
+    )");
+	//Точечная сетка на холсте с созданием сцены
+	const int gridSize = 30; // Шаг 30 px — просторно и удобно
+	QPixmap gridPixmap(gridSize, gridSize);
+	gridPixmap.fill(QColor("#F8FAFC")); // Мягкий фон
+
+	QPainter gridPainter(&gridPixmap);
+	gridPainter.setRenderHint(QPainter::Antialiasing); // Сглаживание кружочков
+	gridPainter.setPen(Qt::NoPen);                     // Без контура
+	gridPainter.setBrush(QColor("#94A3B8"));           // Заметный аккуратный серый цвет
+	gridPainter.drawEllipse(gridSize / 2 - 1, gridSize / 2 - 1, 2, 2); // Кружок диаметром 2px!
+
+	ui.canvasView->setBackgroundBrush(QBrush(gridPixmap));
+	ui.canvasView->setRenderHint(QPainter::Antialiasing);
+
+	m_scene = new QGraphicsScene(this);
 	m_scene->installEventFilter(this); //Устанавливаем фильтр событий для сцены
 	ui.canvasView->setScene(m_scene); //Устанавливаем сцену в виджет canvasView
 }
