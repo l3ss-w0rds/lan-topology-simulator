@@ -2,6 +2,7 @@
 #include "NetworkDevice.h"
 #include "NodeItem.h"
 #include "CableItem.h"
+#include "ConnectionDialog.h"
 
 LanTopologySimulator::LanTopologySimulator(QWidget *parent)
     : QMainWindow(parent)
@@ -135,19 +136,49 @@ void LanTopologySimulator::handleCableConnection(NodeItem* clickedNode){
 		return;
 	}
 
-	ui.logTextEdit->appendPlainText("[Кабель] Узлы выбраны: " +
-	m_firstCableNode->getDevice()->getName() + "<----->" + clickedNode->getDevice()->getName());
+	NetworkDevice* dev1 = m_firstCableNode->getDevice();
+	NetworkDevice* dev2 = clickedNode->getDevice();
 
-	CableItem* cable = new CableItem(m_firstCableNode, clickedNode, CableType::TwistedPair); //Создаем объект кабеля
-	m_scene->addItem(cable);
+	if (!dev1->hasFreePorts()) {
+		ui.logTextEdit->appendPlainText(QString("[ОШИБКА] У %1 закончились свободные порты!").arg(dev1->getName()));
+		m_firstCableNode->setSelected(false);
+		m_firstCableNode = nullptr;
+		return;
+	}
+	if (!dev2->hasFreePorts()) {
+		ui.logTextEdit->appendPlainText(QString("[ОШИБКА] У %1 закончились свободные порты!").arg(dev2->getName()));
+		m_firstCableNode->setSelected(false);
+		m_firstCableNode = nullptr;
+		return;
+	}
 
-	m_firstCableNode->addCable(cable);
-	clickedNode->addCable(cable);
-	
-	cable->trackNodes();
+	//Открываем диалог подключения у мышки
+	ConnectionDialog dialog(dev1, dev2, this);
+	dialog.move(QCursor::pos()); 
 
-	ui.logTextEdit->appendPlainText("[Кабель] Соединение установлено");
+	//Если пользователь нажал "Подключить" (или просто Enter)
+	if (dialog.exec() == QDialog::Accepted) {
+		CableType cableType = dialog.getSelectedCableType();
+		QString port1 = dialog.getSelectedPort1();
+		QString port2 = dialog.getSelectedPort2();
 
+		//Занимаем порты в МОДЕЛИ
+		dev1->connectPort(port1, dev2, port2);
+		dev2->connectPort(port2, dev1, port1);
+
+		//Создаем провод на ХОЛСТЕ
+		CableItem* cable = new CableItem(m_firstCableNode, clickedNode, cableType);
+		m_scene->addItem(cable);
+		m_firstCableNode->addCable(cable);
+		clickedNode->addCable(cable);
+		cable->trackNodes();
+
+		ui.logTextEdit->appendPlainText(QString("[СЕТЬ] Соединено: %1 [%2] &lt;---&gt; %3 [%4]")
+			.arg(dev1->getName(), port1, dev2->getName(), port2));
+	}
+	else {
+		ui.logTextEdit->appendPlainText("[ОТМЕНА] Подключение отменено пользователем.");
+	}
 
 	m_firstCableNode->setSelected(false);
 	m_firstCableNode = nullptr;

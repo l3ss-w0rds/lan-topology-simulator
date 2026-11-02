@@ -52,6 +52,9 @@
     <ClCompile Include="CableItem.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="ConnectionDialog.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Model\NetworkDevice.h">
@@ -66,6 +69,9 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="UI\LanTopologySimulator.h">
+      <Filter>UI</Filter>
+    </QtMoc>
+    <QtMoc Include="ConnectionDialog.h">
       <Filter>UI</Filter>
     </QtMoc>
   </ItemGroup>

@@ -98,17 +98,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ConnectionDialog.cpp">
+      <DeploymentContent>false</DeploymentContent>
+    </ClCompile>
     <ClCompile Include="Model\NetworkDevice.cpp" />
     <ClCompile Include="Graphics\NodeItem.cpp" />
     <QtRcc Include="LanTopologySimulator.qrc" />
     <QtUic Include="UI\LanTopologySimulator.ui" />
-    <QtMoc Include="UI\LanTopologySimulator.h" />
+    <QtMoc Include="UI\LanTopologySimulator.h">
+      <DeploymentContent>false</DeploymentContent>
+    </QtMoc>
     <ClCompile Include="CableItem.cpp" />
-    <ClCompile Include="UI\LanTopologySimulator.cpp" />
+    <ClCompile Include="UI\LanTopologySimulator.cpp">
+      <DeploymentContent>false</DeploymentContent>
+    </ClCompile>
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CableItem.h" />
+    <QtMoc Include="ConnectionDialog.h">
+      <DeploymentContent>true</DeploymentContent>
+    </QtMoc>
     <ClInclude Include="Model\NetworkDevice.h" />
     <ClInclude Include="Graphics\NodeItem.h" />
   </ItemGroup>

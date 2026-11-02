@@ -7,6 +7,7 @@
 #include <QGraphicsTextItem> //Для текста на холсте
 #include <QFont> //Для размера и жирности
 #include <QGraphicsSceneMouseEvent> //События мышки на сцене
+//#include <QComboBox> //Для выбора типа кабеля(менюшка)
 #include "ui_LanTopologySimulator.h"
 #include "NetworkDevice.h"
 #include "NodeItem.h"
@@ -34,6 +35,7 @@ private:
     Ui::LanTopologySimulatorClass ui;
 	QGraphicsScene* m_scene; //Сцена для отображения объектов
 	NodeItem* m_firstCableNode; //Узел, с которого тянем кабель
+	//QComboBox* m_cableTypeComboBox = nullptr; //для выбора типа кабеля
 
 	void logDeviceCreated(const NetworkDevice* device);
 	void handleCableConnection(NodeItem* clickedNode); // Логика 1клик и 2клик
