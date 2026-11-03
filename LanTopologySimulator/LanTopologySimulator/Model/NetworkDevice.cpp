@@ -104,6 +104,26 @@ void NetworkDevice::disconnectPort(const QString& myPortName) {
 	}
 }
 
+void NetworkDevice::disconnectedFrom(NetworkDevice* other) {
+	if (!other) return;
+	//Освобождаем порт на нашем устрве, который вел к other
+	for (auto& port : m_ports) {
+		if (port.connectedDevice == other) {
+			port.isOccupied = false;
+			port.connectedDevice = nullptr;
+			port.connectedPortName = "";
+		}
+	}
+	//Освобождаем порт на other, который вел к нам
+	for (auto& port : other->m_ports) {
+		if (port.connectedDevice == this) {
+			port.isOccupied = false;
+			port.connectedDevice = nullptr;
+			port.connectedPortName = "";
+		}
+	}
+
+}
 	/*
 	for (int i = 0; i < 11; i++) {
 		int rn = dis(gen);

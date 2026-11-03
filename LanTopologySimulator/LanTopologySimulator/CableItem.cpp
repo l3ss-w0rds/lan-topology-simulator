@@ -28,8 +28,21 @@ CableItem::CableItem(NodeItem* startNode, NodeItem* endNode, CableType type, QGr
 	setFlags(QGraphicsItem::ItemIsSelectable);
 	setZValue(-1);
 }
+
 CableItem::~CableItem() {
+	//Освобождаем порты в МОДЕЛИ при удалении кабеля
+	if (m_startNode && m_endNode && m_startNode->getDevice() && m_endNode->getDevice()) {
+		m_startNode->getDevice()->disconnectedFrom(m_endNode->getDevice());
+	}
+	//Отвязываем провод от узлов в ГРАФИКЕ
+	if (m_startNode) {
+		m_startNode->removeCable(this);
+	}
+	if (m_endNode) {
+		m_endNode->removeCable(this);
+	}
 }
+
 void CableItem::trackNodes() {
 	if (!m_startNode || !m_endNode) return;
 	prepareGeometryChange(); //обновление индекса сцены

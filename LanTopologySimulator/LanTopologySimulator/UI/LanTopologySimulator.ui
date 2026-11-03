@@ -145,7 +145,7 @@
    <addaction name="actionCable"/>
    <addaction name="actionFerify"/>
    <addaction name="actionFailure"/>
-   <addaction name="actionDrlrtr"/>
+   <addaction name="actionDelete"/>
    <addaction name="actionPlay"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
@@ -154,7 +154,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="LanTopologySimulator.qrc">
+    <iconset resource="../LanTopologySimulator.qrc">
      <normaloff>:/LanTopologySimulator/icons/cursor.svg</normaloff>:/LanTopologySimulator/icons/cursor.svg</iconset>
    </property>
    <property name="text">
@@ -177,7 +177,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="LanTopologySimulator.qrc">
+    <iconset resource="../LanTopologySimulator.qrc">
      <normaloff>:/LanTopologySimulator/icons/cable.svg</normaloff>:/LanTopologySimulator/icons/cable.svg</iconset>
    </property>
    <property name="text">
@@ -200,7 +200,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="LanTopologySimulator.qrc">
+    <iconset resource="../LanTopologySimulator.qrc">
      <normaloff>:/LanTopologySimulator/icons/fault.svg</normaloff>:/LanTopologySimulator/icons/fault.svg</iconset>
    </property>
    <property name="text">
@@ -220,7 +220,7 @@
   </action>
   <action name="actionFerify">
    <property name="icon">
-    <iconset resource="LanTopologySimulator.qrc">
+    <iconset resource="../LanTopologySimulator.qrc">
      <normaloff>:/LanTopologySimulator/icons/check.svg</normaloff>:/LanTopologySimulator/icons/check.svg</iconset>
    </property>
    <property name="text">
@@ -235,9 +235,12 @@
 &lt;/p&gt;</string>
    </property>
   </action>
-  <action name="actionDrlrtr">
+  <action name="actionDelete">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
-    <iconset resource="LanTopologySimulator.qrc">
+    <iconset resource="../LanTopologySimulator.qrc">
      <normaloff>:/LanTopologySimulator/icons/delete.svg</normaloff>:/LanTopologySimulator/icons/delete.svg</iconset>
    </property>
    <property name="text">
@@ -257,7 +260,7 @@
   </action>
   <action name="actionPlay">
    <property name="icon">
-    <iconset resource="LanTopologySimulator.qrc">
+    <iconset resource="../LanTopologySimulator.qrc">
      <normaloff>:/LanTopologySimulator/icons/play.svg</normaloff>:/LanTopologySimulator/icons/play.svg</iconset>
    </property>
    <property name="text">
@@ -278,7 +281,7 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="LanTopologySimulator.qrc"/>
+  <include location="../LanTopologySimulator.qrc"/>
  </resources>
  <connections/>
 </ui>

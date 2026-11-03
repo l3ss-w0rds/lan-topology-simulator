@@ -14,6 +14,11 @@ NodeItem::NodeItem(NetworkDevice* device, QGraphicsItem* parent)
 
 NodeItem::~NodeItem()
 {
+    auto cablesCopy = m_cables;
+    for (CableItem* cable : cablesCopy) {
+		if (cable->scene()) cable->scene()->removeItem(cable); //Удаляем кабель со сцены, если он там есть
+		delete cable; //Удаляем кабель, который отвязывается от узлов в деструкторе CableItem
+	}
     delete m_device;
 }
 QRectF NodeItem::boundingRect() const
@@ -82,6 +87,11 @@ void NodeItem::addCable(CableItem* cable)
     if (!m_cables.contains(cable)) {
         m_cables.append(cable);
     }
+}
+void NodeItem::removeCable(CableItem* cable)
+{
+    if (!cable) return;
+    m_cables.removeAll(cable);
 }
 
 QVariant NodeItem::itemChange(GraphicsItemChange change, const QVariant& value) {

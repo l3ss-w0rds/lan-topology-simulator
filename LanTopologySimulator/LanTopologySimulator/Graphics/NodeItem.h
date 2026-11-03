@@ -2,6 +2,7 @@
 #include <QGraphicsItem>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
+#include <QGraphicsScene>
 #include "NetworkDevice.h"
 
 class CableItem;
@@ -15,6 +16,7 @@ public:
 	QRectF boundingRect() const override; //Возврощает прямоугольник габарита узалов
 	void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override; //Рисует фигурку, иконку и подписи на сцене
 	void addCable(CableItem* cable); //Добавляет кабель к узлу
+	void removeCable(CableItem* cable); //Удаляет кабель из узла
 
 	NetworkDevice* getDevice() const { return m_device; }
 	const QList<CableItem*>& getCables() const { return m_cables; }

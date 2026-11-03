@@ -87,6 +87,23 @@ LanTopologySimulator::LanTopologySimulator(QWidget *parent)
             padding: 8px;
         }
     )");
+	QActionGroup* toolsGroup = new QActionGroup(this); //Инструменты в группу, для взаимного исключения
+
+	ui.actionCable->setCheckable(true);
+	ui.actionDelete->setCheckable(true);
+
+	toolsGroup->addAction(ui.actionCable);
+	toolsGroup->addAction(ui.actionDelete);
+	if (ui.actionCursor) {
+		ui.actionCursor->setCheckable(true);
+		toolsGroup->addAction(ui.actionCursor);
+		ui.actionCursor->setChecked(true);
+	}
+	toolsGroup->setExclusive(true); //Включаем взаимное исключение
+
+	ui.canvasView->setDragMode(QGraphicsView::RubberBandDrag); // Включаем рамку выделения со старта!
+	ui.canvasView->setRubberBandSelectionMode(Qt::IntersectsItemShape); // Выделять всё, чего коснулась рамка
+
 	//Точечная сетка на холсте с созданием сцены
 	const int gridSize = 30; // Шаг 30 px — просторно и удобно
 	QPixmap gridPixmap(gridSize, gridSize);
@@ -100,6 +117,7 @@ LanTopologySimulator::LanTopologySimulator(QWidget *parent)
 
 	ui.canvasView->setBackgroundBrush(QBrush(gridPixmap));
 	ui.canvasView->setRenderHint(QPainter::Antialiasing);
+
 
 	m_scene = new QGraphicsScene(this);
 	m_scene->installEventFilter(this); //Устанавливаем фильтр событий для сцены
@@ -187,19 +205,104 @@ void LanTopologySimulator::logDeviceCreated(const NetworkDevice* device) {
 
 }
 
+
+void LanTopologySimulator::resetCableState() {
+	// Выключаем режим кабеля, если он был включен
+	if (m_firstCableNode) {
+		m_firstCableNode->setSelected(false);
+		m_firstCableNode = nullptr;
+	}
+}
+
 void LanTopologySimulator::on_actionCable_triggered()
 {
+	resetCableState();
+	ui.canvasView->setDragMode(QGraphicsView::NoDrag);
+	//Выключаем режим корзины
+	if (ui.actionDelete) ui.actionDelete->setChecked(false);
+
 	if (m_firstCableNode) m_firstCableNode->setSelected(false);
-	m_firstCableNode = nullptr; //Сбрасываем первый узел для кабеля
-	ui.logTextEdit->appendPlainText(QStringLiteral("[РЕЖИМ] Прокладка кабеля. Кликните по первому устройству"));
+	m_firstCableNode = nullptr;
+
+	if (ui.actionCable->isChecked()) {
+		ui.logTextEdit->appendPlainText(QStringLiteral("[РЕЖИМ] Прокладка кабеля. Кликните по первому устройству."));
+	}
+	else {
+		ui.logTextEdit->appendPlainText(QStringLiteral("[РЕЖИМ] Обычный указатель."));
+	}
 
 }
 
+void LanTopologySimulator::on_actionDelete_triggered()
+{
+	resetCableState();
+	ui.canvasView->setDragMode(QGraphicsView::NoDrag);
+
+	//если пользователь выделил объекты и нажал на корзину — удаляем их сразу
+	if (!m_scene->selectedItems().isEmpty()) {
+		deleteSelectedItems();
+		ui.actionDelete->setChecked(false); // Отжимаем корзину обратно
+		ui.actionCursor->setChecked(true);  // Возвращаем стрелку
+		ui.canvasView->setDragMode(QGraphicsView::RubberBandDrag);
+		return;
+	}
+
+	if (ui.actionDelete->isChecked()) {
+		ui.logTextEdit->appendPlainText(QStringLiteral("[РЕЖИМ] Удаление кликом включено. Кликайте по объектам для удаления."));
+	}
+	else {
+		ui.logTextEdit->appendPlainText(QStringLiteral("[РЕЖИМ] Обычный указатель."));
+	}
+}
+
+void LanTopologySimulator::on_actionCursor_triggered() {
+	resetCableState();
+	ui.canvasView->setDragMode(QGraphicsView::RubberBandDrag);
+	ui.canvasView->setCursor(Qt::ArrowCursor);
+
+	ui.logTextEdit->appendPlainText(QStringLiteral("[РЕЖИМ] Указатель. Можно выделять область и перемещать узлы."));
+}
+
 bool LanTopologySimulator::eventFilter(QObject* obj, QEvent* event) {
+	//Ловим клавишу delete и backspace для удаления выделенных объектов
+	if (obj == m_scene && event->type() == QEvent::KeyPress) {
+		auto* keyEvent = static_cast<QKeyEvent*>(event);
+		if (keyEvent->key() == Qt::Key_Delete || keyEvent->key() == Qt::Key_Backspace) {
+			deleteSelectedItems();
+			return true;
+		}
+	}
+
 	if (obj == m_scene && event->type() == QEvent::GraphicsSceneMousePress) {
+		auto* mouseEvent = static_cast<QGraphicsSceneMouseEvent*>(event);
+		QGraphicsItem* item = m_scene->itemAt(mouseEvent->scenePos(), QTransform());
+
+		//Режим КОРЗИНЫ (удаление кликом)
+		if (ui.actionDelete && ui.actionDelete->isChecked()) {
+			if (!item) return true; // Кликнули в пустое место — ничего не делаем
+
+			// Ищем узел или кабель под курсором
+			while (item && !dynamic_cast<NodeItem*>(item) && !dynamic_cast<CableItem*>(item)) {
+				item = item->parentItem();
+			}
+			// Если кликнули по кабелю — удаляем его мгновенно
+			if (auto* cable = dynamic_cast<CableItem*>(item)) {
+				delete cable;
+				ui.logTextEdit->appendPlainText("[УДАЛЕНИЕ] Кабель удален кликом.");
+				return true; // Блокируем дальнейшую обработку
+			}
+			// Если кликнули по узлу — удаляем узел со всеми его кабелями
+			if (auto* node = dynamic_cast<NodeItem*>(item)) {
+				if (node == m_firstCableNode) m_firstCableNode = nullptr;
+				QString devName = node->getDevice() ? node->getDevice()->getName() : "Устройство";
+				delete node;
+				ui.logTextEdit->appendPlainText(QString("[УДАЛЕНИЕ] %1 удален кликом.").arg(devName));
+				return true; // Блокируем дальнейшую обработку
+			}
+		}
+		// Режим прокладки КАБЕЛЯ
 		if (ui.actionCable && ui.actionCable->isChecked()) {
-			auto *mouseEvent = static_cast<QGraphicsSceneMouseEvent*>(event); //событие превращаем в клик мыши
-			QGraphicsItem *item = m_scene->itemAt(mouseEvent->scenePos(), QTransform()); //что лежит под мышкой, спрашив. у сцены
+			//auto *mouseEvent = static_cast<QGraphicsSceneMouseEvent*>(event); //событие превращаем в клик мыши
 			while (item && !dynamic_cast<NodeItem*>(item)) {
 				item = item->parentItem();
 			}
@@ -212,6 +315,18 @@ bool LanTopologySimulator::eventFilter(QObject* obj, QEvent* event) {
 
 	}
 	return QWidget::eventFilter(obj, event);
+}
+
+void LanTopologySimulator::keyPressEvent(QKeyEvent* event)
+{
+	// Если нажата клавиша Delete или Backspace — запускаем удаление
+	if (event->key() == Qt::Key_Delete || event->key() == Qt::Key_Backspace) {
+		deleteSelectedItems();
+		event->accept();
+		return;
+	}
+
+	QMainWindow::keyPressEvent(event);
 }
 
 void LanTopologySimulator::handleCableConnection(NodeItem* clickedNode){
@@ -275,4 +390,44 @@ void LanTopologySimulator::handleCableConnection(NodeItem* clickedNode){
 
 	m_firstCableNode->setSelected(false);
 	m_firstCableNode = nullptr;
+}
+
+void LanTopologySimulator::deleteSelectedItems() {
+	//Забираем со сцены ВСЁ, что польз выделил мышкой
+	QList<QGraphicsItem*> selected = m_scene->selectedItems();
+	if (selected.isEmpty()) return;
+	m_scene->clearSelection(); //снимаем выделение
+
+	QList<CableItem*> cablesToDelete;
+	QList<NodeItem*> nodesToDelete;
+
+	//СНАЧАЛА удаляем отдельно выделенные кабели
+	for (QGraphicsItem* item : selected) {
+		if (auto* cable = dynamic_cast<CableItem*>(item)) {
+			cablesToDelete.append(cable);
+		}
+		else if (auto* node = dynamic_cast<NodeItem*>(item)) {
+			nodesToDelete.append(node);
+		}
+	}
+
+	//Удаляем кабели, чтобы не оставалось висячих проводов на удаляемых узлах
+	for (CableItem* cable : cablesToDelete) {
+		delete cable; 
+	}
+	//Удаляем узлы
+	for (NodeItem* node : nodesToDelete) {
+		if (node == m_firstCableNode) {
+			m_firstCableNode = nullptr;
+		}
+
+		QString devName = node->getDevice() ? node->getDevice()->getName() : "Устройство";
+		delete node; 
+
+		ui.logTextEdit->appendPlainText(QString("[УДАЛЕНИЕ] %1 удален.").arg(devName));
+	}
+
+	if (!cablesToDelete.isEmpty()) {
+		ui.logTextEdit->appendPlainText(QString("[УДАЛЕНИЕ] Удалено кабелей: %1.").arg(cablesToDelete.size()));
+	}
 }
