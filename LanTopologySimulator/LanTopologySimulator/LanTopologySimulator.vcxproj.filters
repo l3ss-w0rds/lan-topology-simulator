@@ -55,6 +55,9 @@
     <ClCompile Include="ConnectionDialog.cpp">
       <Filter>UI</Filter>
     </ClCompile>
+    <ClCompile Include="DevicePropertiesDialog.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Model\NetworkDevice.h">
@@ -74,9 +77,15 @@
     <QtMoc Include="ConnectionDialog.h">
       <Filter>UI</Filter>
     </QtMoc>
+    <QtMoc Include="DevicePropertiesDialog.h">
+      <Filter>UI</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="UI\LanTopologySimulator.ui">
+      <Filter>UI</Filter>
+    </QtUic>
+    <QtUic Include="DevicePropertiesDialog.ui">
       <Filter>UI</Filter>
     </QtUic>
   </ItemGroup>

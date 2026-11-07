@@ -28,6 +28,7 @@ public:
 	QString getMac() const { return m_mac; }
 	DeviceType getType() const { return m_type; }
 	bool getOnline() const { return m_isOnline; }
+	const QVector<NetworkPort>& getPorts() const { return m_ports; }
 
 	QVector<NetworkPort> getFreePorts() const; //¬озврощает список свободных портов устройства
 	bool hasFreePorts() const; //ѕроверка на наличие свободных портов

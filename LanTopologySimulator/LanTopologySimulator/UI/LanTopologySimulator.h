@@ -7,6 +7,7 @@
 #include <QGraphicsTextItem> //Для текста на холсте
 #include <QFont> //Для размера и жирности
 #include <QGraphicsSceneMouseEvent> //События мышки на сцене
+#include "DevicePropertiesDialog.h"
 //#include <QComboBox> //Для выбора типа кабеля(менюшка)
 #include "ui_LanTopologySimulator.h"
 #include "NetworkDevice.h"

@@ -87,19 +87,13 @@ LanTopologySimulator::LanTopologySimulator(QWidget *parent)
             padding: 8px;
         }
     )");
-	QActionGroup* toolsGroup = new QActionGroup(this); //Инструменты в группу, для взаимного исключения
-
+	//Делаем кнопки переключаемыми
 	ui.actionCable->setCheckable(true);
 	ui.actionDelete->setCheckable(true);
-
-	toolsGroup->addAction(ui.actionCable);
-	toolsGroup->addAction(ui.actionDelete);
 	if (ui.actionCursor) {
 		ui.actionCursor->setCheckable(true);
-		toolsGroup->addAction(ui.actionCursor);
-		ui.actionCursor->setChecked(true);
+		ui.actionCursor->setChecked(true); // Со старта активна стрелка
 	}
-	toolsGroup->setExclusive(true); //Включаем взаимное исключение
 
 	ui.canvasView->setDragMode(QGraphicsView::RubberBandDrag); // Включаем рамку выделения со старта!
 	ui.canvasView->setRubberBandSelectionMode(Qt::IntersectsItemShape); // Выделять всё, чего коснулась рамка
@@ -217,12 +211,15 @@ void LanTopologySimulator::resetCableState() {
 void LanTopologySimulator::on_actionCable_triggered()
 {
 	resetCableState();
-	ui.canvasView->setDragMode(QGraphicsView::NoDrag);
-	//Выключаем режим корзины
+	if (!ui.actionCable->isChecked()) {
+		if (ui.actionCursor) ui.actionCursor->setChecked(true);  // Возвращаем стрелку
+		on_actionCursor_triggered();
+		return;
+	}
 	if (ui.actionDelete) ui.actionDelete->setChecked(false);
+	if (ui.actionCursor) ui.actionCursor->setChecked(false);
 
-	if (m_firstCableNode) m_firstCableNode->setSelected(false);
-	m_firstCableNode = nullptr;
+	ui.canvasView->setDragMode(QGraphicsView::NoDrag);
 
 	if (ui.actionCable->isChecked()) {
 		ui.logTextEdit->appendPlainText(QStringLiteral("[РЕЖИМ] Прокладка кабеля. Кликните по первому устройству."));
@@ -236,6 +233,15 @@ void LanTopologySimulator::on_actionCable_triggered()
 void LanTopologySimulator::on_actionDelete_triggered()
 {
 	resetCableState();
+	if (!ui.actionDelete->isChecked()) {
+		if (ui.actionCursor) ui.actionCursor->setChecked(true);  // Возвращаем стрелку
+		on_actionCursor_triggered();
+		return;
+	}
+
+	if (ui.actionCable) ui.actionCable->setChecked(false);
+	if (ui.actionCursor) ui.actionCursor->setChecked(false);
+
 	ui.canvasView->setDragMode(QGraphicsView::NoDrag);
 
 	//если пользователь выделил объекты и нажал на корзину — удаляем их сразу
@@ -246,7 +252,6 @@ void LanTopologySimulator::on_actionDelete_triggered()
 		ui.canvasView->setDragMode(QGraphicsView::RubberBandDrag);
 		return;
 	}
-
 	if (ui.actionDelete->isChecked()) {
 		ui.logTextEdit->appendPlainText(QStringLiteral("[РЕЖИМ] Удаление кликом включено. Кликайте по объектам для удаления."));
 	}
@@ -257,6 +262,10 @@ void LanTopologySimulator::on_actionDelete_triggered()
 
 void LanTopologySimulator::on_actionCursor_triggered() {
 	resetCableState();
+	if (ui.actionCursor) ui.actionCursor->setChecked(true);
+	if (ui.actionCable) ui.actionCable->setChecked(false);
+	if (ui.actionDelete) ui.actionDelete->setChecked(false);
+
 	ui.canvasView->setDragMode(QGraphicsView::RubberBandDrag);
 	ui.canvasView->setCursor(Qt::ArrowCursor);
 
@@ -272,7 +281,27 @@ bool LanTopologySimulator::eventFilter(QObject* obj, QEvent* event) {
 			return true;
 		}
 	}
+	//Ловим двойной клик мыши на сцене для открытия диалога свойств устройства
+	if (obj == m_scene && event->type() == QEvent::GraphicsSceneMouseDoubleClick) {
+		auto* mouseEvent = static_cast<QGraphicsSceneMouseEvent*>(event);
+		QGraphicsItem* item = m_scene->itemAt(mouseEvent->scenePos(), QTransform());
 
+		// Ищем, есть ли под курсором NodeItem
+		while (item && !dynamic_cast<NodeItem*>(item)) {
+			item = item->parentItem();
+		}
+
+		if (auto* node = dynamic_cast<NodeItem*>(item)) {
+			if (node->getDevice()) {
+				// Открываем диалог модально (блокирует ввод до закрытия)
+				DevicePropertiesDialog dialog(node->getDevice(), this);
+				dialog.exec();
+				return true; // Событие обработано!
+			}
+		}
+	}
+
+	//Ловим клики мыши на сцене для удаления объектов или прокладки кабеля
 	if (obj == m_scene && event->type() == QEvent::GraphicsSceneMousePress) {
 		auto* mouseEvent = static_cast<QGraphicsSceneMouseEvent*>(event);
 		QGraphicsItem* item = m_scene->itemAt(mouseEvent->scenePos(), QTransform());
