@@ -293,6 +293,7 @@ bool LanTopologySimulator::eventFilter(QObject* obj, QEvent* event) {
 
 		if (auto* node = dynamic_cast<NodeItem*>(item)) {
 			if (node->getDevice()) {
+				resetCableState(); // Сбрасываем режим кабеля, если он был активен
 				// Открываем диалог модально (блокирует ввод до закрытия)
 				DevicePropertiesDialog dialog(node->getDevice(), this);
 				dialog.exec();

@@ -5,7 +5,6 @@
 #include "NetworkDevice.h"
 
 class ConnectionDialog : public QDialog {
-	Q_OBJECT
 public:
 	ConnectionDialog(NetworkDevice* dev1, NetworkDevice* dev2, QWidget* parent = nullptr);
 	~ConnectionDialog() override = default;

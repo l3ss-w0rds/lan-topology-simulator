@@ -49,13 +49,13 @@
     <ClCompile Include="UI\LanTopologySimulator.cpp">
       <Filter>UI</Filter>
     </ClCompile>
-    <ClCompile Include="CableItem.cpp">
+    <ClCompile Include="Graphics\CableItem.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="ConnectionDialog.cpp">
+    <ClCompile Include="UI\ConnectionDialog.cpp">
       <Filter>UI</Filter>
     </ClCompile>
-    <ClCompile Include="DevicePropertiesDialog.cpp">
+    <ClCompile Include="UI\DevicePropertiesDialog.cpp">
       <Filter>UI</Filter>
     </ClCompile>
   </ItemGroup>
@@ -66,18 +66,18 @@
     <ClInclude Include="Graphics\NodeItem.h">
       <Filter>Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="CableItem.h">
+    <ClInclude Include="Graphics\CableItem.h">
       <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\ConnectionDialog.h">
+      <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="UI\LanTopologySimulator.h">
       <Filter>UI</Filter>
     </QtMoc>
-    <QtMoc Include="ConnectionDialog.h">
-      <Filter>UI</Filter>
-    </QtMoc>
-    <QtMoc Include="DevicePropertiesDialog.h">
+    <QtMoc Include="UI\DevicePropertiesDialog.h">
       <Filter>UI</Filter>
     </QtMoc>
   </ItemGroup>

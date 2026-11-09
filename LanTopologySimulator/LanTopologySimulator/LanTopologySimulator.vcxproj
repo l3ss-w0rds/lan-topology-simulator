@@ -98,10 +98,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ConnectionDialog.cpp">
-      <DeploymentContent>false</DeploymentContent>
-    </ClCompile>
-    <ClCompile Include="DevicePropertiesDialog.cpp" />
+    <ClCompile Include="Graphics\CableItem.cpp" />
     <ClCompile Include="Model\NetworkDevice.cpp" />
     <ClCompile Include="Graphics\NodeItem.cpp" />
     <QtRcc Include="LanTopologySimulator.qrc" />
@@ -110,18 +107,19 @@
     <QtMoc Include="UI\LanTopologySimulator.h">
       <DeploymentContent>false</DeploymentContent>
     </QtMoc>
-    <ClCompile Include="CableItem.cpp" />
+    <ClCompile Include="UI\ConnectionDialog.cpp" />
+    <ClCompile Include="UI\DevicePropertiesDialog.cpp">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">UI;Graphics;Model;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
     <ClCompile Include="UI\LanTopologySimulator.cpp">
       <DeploymentContent>false</DeploymentContent>
     </ClCompile>
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CableItem.h" />
-    <QtMoc Include="ConnectionDialog.h">
-      <DeploymentContent>true</DeploymentContent>
-    </QtMoc>
-    <QtMoc Include="DevicePropertiesDialog.h" />
+    <ClInclude Include="UI\ConnectionDialog.h" />
+    <QtMoc Include="UI\DevicePropertiesDialog.h" />
+    <ClInclude Include="Graphics\CableItem.h" />
     <ClInclude Include="Model\NetworkDevice.h" />
     <ClInclude Include="Graphics\NodeItem.h" />
   </ItemGroup>
