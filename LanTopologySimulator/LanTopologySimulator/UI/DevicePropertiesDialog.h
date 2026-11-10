@@ -1,9 +1,12 @@
 #pragma once
 #include <QDialog>
 #include "NetworkDevice.h"
+#include "TerminalWidget.h"
 #include <QDialogButtonBox>            
 #include <QTableWidgetItem>            
-#include <QHeaderView>                 
+#include <QHeaderView>
+#include <QVBoxLayout>
+
 
 
 // Связываем с формой из Qt Designer

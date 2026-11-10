@@ -98,7 +98,7 @@ void ConnectionDialog::setupUI(NetworkDevice* dev1, NetworkDevice* dev2)
     formLayout->setSpacing(10);
     formLayout->setLabelAlignment(Qt::AlignLeft);
 
-    // 1. Выпадающий список типов кабеля
+    //Выпадающий список типов кабеля
     m_cableTypeCombo = new QComboBox(this);
     m_cableTypeCombo->addItem(QStringLiteral("🔵 Витая пара (Медь, 1G)"), static_cast<int>(CableType::TwistedPair));
     m_cableTypeCombo->addItem(QStringLiteral("🟠 Оптоволокно (10G)"), static_cast<int>(CableType::OpticalFiber));
@@ -106,14 +106,14 @@ void ConnectionDialog::setupUI(NetworkDevice* dev1, NetworkDevice* dev2)
     m_cableTypeCombo->addItem(QStringLiteral("🔷 Консольный кабель"), static_cast<int>(CableType::ConsoleCable));
     formLayout->addRow(QStringLiteral("Тип среды:"), m_cableTypeCombo);
 
-    // 2. Порты первого устройства
+    //Порты первого устройства
     m_port1Combo = new QComboBox(this);
     for (const auto& port : dev1->getFreePorts()) {
         m_port1Combo->addItem(port.name);
     }
     formLayout->addRow(QString("Порт %1:").arg(dev1->getName()), m_port1Combo);
 
-    // 3. Порты второго устройства
+    //Порты второго устройства
     m_port2Combo = new QComboBox(this);
     for (const auto& port : dev2->getFreePorts()) {
         m_port2Combo->addItem(port.name);

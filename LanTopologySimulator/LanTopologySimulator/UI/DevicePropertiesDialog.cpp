@@ -116,7 +116,13 @@ DevicePropertiesDialog::DevicePropertiesDialog (NetworkDevice* device,QWidget *p
 		loadData();
 		loadPortsTable();
 	}
-
+    // Встраиваем терминал во вторую вкладку (индекс 1)
+    if (ui->tabWidget->count() > 1) {
+        QWidget* cliTab = ui->tabWidget->widget(1);
+        QVBoxLayout* cliLayout = new QVBoxLayout(cliTab);
+        cliLayout->setContentsMargins(0, 0, 0, 0); // Без лишних рамок
+        cliLayout->addWidget(new TerminalWidget(m_device, cliTab));
+    }
 	connect(ui->cancelButton, &QPushButton::clicked, this, &QDialog::reject);
 
 	connect(ui->okButton, &QPushButton::clicked, this, [this]() {
@@ -128,7 +134,6 @@ DevicePropertiesDialog::DevicePropertiesDialog (NetworkDevice* device,QWidget *p
 		accept(); // Закрываем окно с сохранением
 		});
 }
-
 
 DevicePropertiesDialog::~DevicePropertiesDialog() {
 	delete ui;

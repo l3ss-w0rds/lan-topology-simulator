@@ -101,6 +101,7 @@
     <ClCompile Include="Graphics\CableItem.cpp" />
     <ClCompile Include="Model\NetworkDevice.cpp" />
     <ClCompile Include="Graphics\NodeItem.cpp" />
+    <ClCompile Include="UI\TerminalWidget.cpp" />
     <QtRcc Include="LanTopologySimulator.qrc" />
     <QtUic Include="DevicePropertiesDialog.ui" />
     <QtUic Include="UI\LanTopologySimulator.ui" />
@@ -118,6 +119,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UI\ConnectionDialog.h" />
+    <ClInclude Include="UI\TerminalWidget.h" />
     <QtMoc Include="UI\DevicePropertiesDialog.h" />
     <ClInclude Include="Graphics\CableItem.h" />
     <ClInclude Include="Model\NetworkDevice.h" />

@@ -28,6 +28,7 @@ public:
 	QString getMac() const { return m_mac; }
 	DeviceType getType() const { return m_type; }
 	bool getOnline() const { return m_isOnline; }
+	QString getTerminalHistory() const { return m_terminalHistory; }
 	const QVector<NetworkPort>& getPorts() const { return m_ports; }
 
 	QVector<NetworkPort> getFreePorts() const; //Возврощает список свободных портов устройства
@@ -39,6 +40,7 @@ public:
 	void setName(const QString& name) { m_name = name; }
 	void setIP(const QString& ip) { m_ip = ip; }
 	void setOnline(bool isOnline) { m_isOnline = isOnline; }
+	void setTerminalHistory(const QString& history) { m_terminalHistory = history; }
 
 	bool isConnectedTo(const NetworkDevice* other) const; //Проверка соединения с другим устройством
 	void connectTo(NetworkDevice* other); //Установить соединение с другим устройством
@@ -51,6 +53,7 @@ private:
 	QString m_name;
 	QString m_ip;
 	QString m_mac;
+	QString m_terminalHistory; //История команд терминала
 	DeviceType m_type;
 	bool m_isOnline;
 	//QList <NetworkDevice*> m_connectedDevices; //Список подключенных устройств
