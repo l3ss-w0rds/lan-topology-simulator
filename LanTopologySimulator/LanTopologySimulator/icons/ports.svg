@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Крупный корпус бирки (высота 40px, ширина 48px - строго в калибр соседей) -->
+  <path d="M12 12 H42 L55 30.5 C56.2 31.4 56.2 32.6 55 33.5 L42 52 H12 C9.8 52 8 50.2 8 48 V16 C8 13.8 9.8 12 12 12 Z" 
+        fill="#EFF6FF" 
+        stroke="#1E293B" 
+        stroke-width="2.5" 
+        stroke-linejoin="round"/>
+
+  <!-- Крупное отверстие бирки слева -->
+  <circle cx="19" cy="32" r="5" 
+          fill="#FFFFFF" 
+          stroke="#1E293B" 
+          stroke-width="2.5"/>
+
+  <!-- Две яркие синие строчки метки (как имя порта) -->
+  <line x1="29" y1="26" x2="43" y2="26" stroke="#2563EB" stroke-width="3" stroke-linecap="round"/>
+  <line x1="29" y1="38" x2="39" y2="38" stroke="#2563EB" stroke-width="3" stroke-linecap="round"/>
+</svg>

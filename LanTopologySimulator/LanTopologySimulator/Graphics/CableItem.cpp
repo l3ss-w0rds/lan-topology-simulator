@@ -1,11 +1,15 @@
 #include "CableItem.h"
 #include "NodeItem.h"
 
-CableItem::CableItem(NodeItem* startNode, NodeItem* endNode, CableType type, QGraphicsItem* parent)
+bool CableItem::s_showPorts = true; //по умолчанию порты видны
+
+CableItem::CableItem(NodeItem* startNode, NodeItem* endNode, CableType type, const QString startPort, const QString endPort, QGraphicsItem* parent)
 	: QGraphicsLineItem(parent),
 	m_startNode(startNode),
 	m_endNode(endNode),
-	m_type(type)
+	m_type(type),
+	m_startPort(startPort),
+	m_endPort(endPort)
 {
 	QPen pen;
 	pen.setWidth(3);
@@ -65,11 +69,13 @@ void CableItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
 
-	if (line().length() < 1.0) return;
+	QLineF curLine = line();
+	qreal len = curLine.length();
+	if (len < 1.0) return;
 
 	// Включаем сглаживание
 	painter->setRenderHint(QPainter::Antialiasing, true);
-
+//ОТРИСОВКА САМОЙ ЛИНИИ КАБЕЛЯ
 	QPen pen;
 	pen.setWidth(3);
 	pen.setCapStyle(Qt::RoundCap); // Скругленные аккуратные концы
@@ -86,5 +92,63 @@ void CableItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
 	}
 	painter->setPen(pen);
 	painter->drawLine(line());
+
+//ОТРИСОВКА СМАРТ-КАПСУЛ ПОРТОВ
+	if ((s_showPorts || isSelected()) && len > 95.0) {
+		qreal offset = 40.0; // Отступ от центра устройства к краю иконки
+
+		// Точка первого порта
+		QPointF p1 = curLine.pointAt(offset / len);
+		drawPortBadge(painter, p1, m_startPort);
+
+		// Точка второго порта
+		QPointF p2 = curLine.pointAt((len - offset) / len);
+		drawPortBadge(painter, p2, m_endPort);
+	}
 }
 
+QRectF CableItem::boundingRect() const
+{
+	qreal extra = 35.0;
+	return QGraphicsLineItem::boundingRect().adjusted(-extra, -extra, extra, extra);
+}
+
+void CableItem::drawPortBadge(QPainter* painter, const QPointF& centerPos, const QString& portName) {
+	if (portName.isEmpty()) return;
+
+	painter->save();
+
+	//Настройка шрифта
+	QFont font("Segoe UI", 8, QFont::DemiBold);
+	painter->setFont(font);
+	QFontMetrics fm(font);
+
+	int textWidth = fm.horizontalAdvance(portName);
+	int textHeight = fm.height();
+
+	// Размеры капсулы (с учетом зеленой точки и отступов)
+	int badgeWidth = textWidth + 18;
+	int badgeHeight = textHeight + 4;
+
+	QRectF badgeRect(centerPos.x() - badgeWidth / 2.0,
+		centerPos.y() - badgeHeight / 2.0,
+		badgeWidth, badgeHeight);
+
+	//Белая плашка с мягкой серой границей
+	painter->setPen(QPen(QColor("#CBD5E1"), 1.0));
+	painter->setBrush(QBrush(QColor("#FFFFFF")));
+	painter->drawRoundedRect(badgeRect, 4.0, 4.0);
+
+	//Зеленый светодиод линка
+	painter->setPen(Qt::NoPen);
+	painter->setBrush(QBrush(QColor("#10B981"))); //Изумрудно-зеленый
+	QPointF dotCenter(badgeRect.left() + 7, badgeRect.center().y());
+	painter->drawEllipse(dotCenter, 2.5, 2.5);
+
+	//Текст названия порта
+	painter->setPen(QPen(QColor("#0F172A"))); // Глубокий графитовый цвет текста
+	QRectF textRect(badgeRect.left() + 13, badgeRect.top(), textWidth + 2, badgeHeight);
+	painter->drawText(textRect, Qt::AlignCenter, portName);
+
+	painter->restore();
+}

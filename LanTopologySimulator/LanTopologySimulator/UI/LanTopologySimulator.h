@@ -29,6 +29,7 @@ private slots:
 	void on_actionCable_triggered(); //нажатие кнопки КАБЕЛЬ на панели
 	void on_actionDelete_triggered(); //нажатие кнопки КОРЗИНЫ на панели
 	void on_actionCursor_triggered(); //нажатие кнопки КУРСОР на панели
+	void on_actionTogglePorts_triggered(); //нажатие кнопки ПОРТЫ на панели
 
 protected:
 	bool eventFilter(QObject* obj, QEvent* event) override; //Фильтр событий для мыши

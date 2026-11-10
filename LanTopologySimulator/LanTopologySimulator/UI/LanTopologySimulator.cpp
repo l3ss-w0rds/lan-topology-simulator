@@ -90,6 +90,8 @@ LanTopologySimulator::LanTopologySimulator(QWidget *parent)
 	//Делаем кнопки переключаемыми
 	ui.actionCable->setCheckable(true);
 	ui.actionDelete->setCheckable(true);
+	ui.actionTogglePorts->setChecked(true);
+
 	if (ui.actionCursor) {
 		ui.actionCursor->setCheckable(true);
 		ui.actionCursor->setChecked(true); // Со старта активна стрелка
@@ -272,6 +274,17 @@ void LanTopologySimulator::on_actionCursor_triggered() {
 	ui.logTextEdit->appendPlainText(QStringLiteral("[РЕЖИМ] Указатель. Можно выделять область и перемещать узлы."));
 }
 
+void LanTopologySimulator::on_actionTogglePorts_triggered() {
+	bool show = ui.actionTogglePorts->isChecked();
+	CableItem::setShowPorts(show); //Меняем глобальный флаг видимости портов для всех кабелей
+	m_scene->update(); 
+	if (show) {
+		ui.logTextEdit->appendPlainText(QStringLiteral("[ВИД] Подписи портов включены."));
+	} else {
+		ui.logTextEdit->appendPlainText(QStringLiteral("[ВИД] Подписи портов скрыты."));
+	}
+}
+
 bool LanTopologySimulator::eventFilter(QObject* obj, QEvent* event) {
 	//Ловим клавишу delete и backspace для удаления выделенных объектов
 	if (obj == m_scene && event->type() == QEvent::KeyPress) {
@@ -405,7 +418,7 @@ void LanTopologySimulator::handleCableConnection(NodeItem* clickedNode){
 		dev2->connectPort(port2, dev1, port1);
 
 		//Создаем провод на ХОЛСТЕ
-		CableItem* cable = new CableItem(m_firstCableNode, clickedNode, cableType);
+		CableItem* cable = new CableItem(m_firstCableNode, clickedNode, cableType, port1, port2);
 		m_scene->addItem(cable);
 		m_firstCableNode->addCable(cable);
 		clickedNode->addCable(cable);

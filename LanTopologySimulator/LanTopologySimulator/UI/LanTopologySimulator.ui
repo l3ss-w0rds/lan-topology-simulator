@@ -27,9 +27,8 @@
           <string>ПК</string>
          </property>
          <property name="icon">
-          <iconset>
-           <selectedon>:/LanTopologySimulator/icons/pc.svg</selectedon>
-          </iconset>
+          <iconset resource="../LanTopologySimulator.qrc">
+           <normaloff>:/LanTopologySimulator/icons/pc.svg</normaloff>:/LanTopologySimulator/icons/pc.svg</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -143,10 +142,11 @@
    </attribute>
    <addaction name="actionCursor"/>
    <addaction name="actionCable"/>
+   <addaction name="actionDelete"/>
    <addaction name="actionFerify"/>
    <addaction name="actionFailure"/>
-   <addaction name="actionDelete"/>
    <addaction name="actionPlay"/>
+   <addaction name="actionTogglePorts"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionCursor">
@@ -276,6 +276,35 @@
    </property>
    <property name="shortcut">
     <string>Space</string>
+   </property>
+  </action>
+  <action name="actionTogglePorts">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../LanTopologySimulator.qrc">
+     <normaloff>:/LanTopologySimulator/icons/ports.svg</normaloff>:/LanTopologySimulator/icons/ports.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Порты</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;p style=&quot;margin:0;&quot;&gt;
+  &lt;b&gt;Отображение портов&lt;/b&gt; &lt;span style=&quot;background-color:#DBEAFE; color:#1D4ED8; font-weight:bold; padding:1px 4px; border-radius:3px;&quot;&gt; P &lt;/span&gt;
+&lt;/p&gt;
+&lt;p style=&quot;margin:4px 0 0 0; color:#475569; font-size:9pt;&quot;&gt;
+  Быстрое переключение видимости меток сетевых интерфейсов на схеме
+&lt;/p&gt;</string>
+   </property>
+   <property name="shortcut">
+    <string>P</string>
    </property>
   </action>
  </widget>

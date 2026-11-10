@@ -108,7 +108,6 @@ void TerminalWidget::executeCommand(const QString& rawCommand) {
     }
 }
 
-
 void TerminalWidget::cmdHelp() {
 	m_outputView->appendPlainText("Доступные команды сетевого симулятора:");
 	m_outputView->appendPlainText("  help                  - вызов справки по командам");
@@ -145,6 +144,11 @@ void TerminalWidget::cmdIpconfig() {
 void TerminalWidget::cmdClear() {
     m_outputView->clear();
 }
+
+
+
+
+
 
 void TerminalWidget::cmdPing(const QStringList& args) {
 
