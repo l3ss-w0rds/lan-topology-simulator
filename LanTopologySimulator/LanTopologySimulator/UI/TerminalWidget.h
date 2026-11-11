@@ -19,6 +19,7 @@ private:
 	void cmdClear(); // Очистка терминала
 	void cmdIpconfig(); // Вывод информации о сетевых интерфейсах
 	void cmdPing(const QStringList& args); // Команда ping
+    void cmdShowMacTable(const QStringList& tokens);
 
 
 private:

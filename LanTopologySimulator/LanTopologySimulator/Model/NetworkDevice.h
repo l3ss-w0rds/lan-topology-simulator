@@ -3,6 +3,7 @@
 #include <random>
 #include <QDebug>
 #include <QVector>
+#include "MacTable.h"
 
 enum class DeviceType {
 	PC,
@@ -20,7 +21,7 @@ struct NetworkPort {
 class NetworkDevice {
 public:
 	NetworkDevice(const QString& name, const QString& ip, DeviceType type);
-	virtual ~NetworkDevice() = default;
+	virtual ~NetworkDevice();
 
 	//Геттеры читают свойства объекта
 	QString getName() const {return m_name; }
@@ -30,6 +31,7 @@ public:
 	bool getOnline() const { return m_isOnline; }
 	QString getTerminalHistory() const { return m_terminalHistory; }
 	const QVector<NetworkPort>& getPorts() const { return m_ports; }
+	MacTable* getMacTable() const { return m_macTable; }
 
 	QVector<NetworkPort> getFreePorts() const; //Возврощает список свободных портов устройства
 	bool hasFreePorts() const; //Проверка на наличие свободных портов
@@ -53,11 +55,12 @@ private:
 	QString m_name;
 	QString m_ip;
 	QString m_mac;
-	QString m_terminalHistory; //История команд терминала
+	QString m_terminalHistory;
 	DeviceType m_type;
 	bool m_isOnline;
 	//QList <NetworkDevice*> m_connectedDevices; //Список подключенных устройств
 	QVector<NetworkPort> m_ports; //Список портов устройства
+	MacTable* m_macTable = nullptr; //Табл. мак для свитча
 
 };
 

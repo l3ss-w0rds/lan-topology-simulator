@@ -100,6 +100,9 @@ void TerminalWidget::executeCommand(const QString& rawCommand) {
     else if (cmd == "ipconfig" || cmd == "ifconfig") {
         cmdIpconfig();
     }
+    else if (cmd == "show" || cmd == "mac-table") {
+        cmdShowMacTable(tokens);
+    }
     else {
         // Ошибка неизвестной команды
         m_outputView->appendPlainText(QString("'%1' не является внутренней или внешней командой.")
@@ -152,4 +155,48 @@ void TerminalWidget::cmdClear() {
 
 void TerminalWidget::cmdPing(const QStringList& args) {
 
-}   
+}  
+
+
+
+void TerminalWidget::cmdShowMacTable(const QStringList& tokens)
+{
+    if (!m_device) return;
+
+    // ПРОВЕРКА РОЛИ: на обычном компьютере этой команды нет!
+    if (m_device->getType() != DeviceType::Switch) {
+        m_outputView->appendPlainText("Ошибка: таблица коммутации доступна только на коммутаторах (Switch).");
+        m_outputView->appendPlainText("Для просмотра ARP-таблицы на ПК используйте команду: arp -a\n");
+        return;
+    }
+
+    MacTable* table = m_device->getMacTable();
+    if (!table || table->getSize() == 0) {
+        m_outputView->appendPlainText("Таблица MAC-адресов пуста (коммутатор еще не получал кадры).\n");
+        return;
+    }
+
+    // Красивая шапка таблицы Cisco IOS
+    m_outputView->appendPlainText("          Таблица MAC-адресов коммутатора (CAM Table)");
+    m_outputView->appendPlainText("Vlan    Mac Address       Type        Port");
+    m_outputView->appendPlainText("----    ----------------  --------    ------------------------");
+
+    const auto& entries = table->getEntries();
+    for (const auto& entry : entries) {
+        QString typeStr = (entry.type == TypeEntry::Dynamic) ? "DYNAMIC" :
+            (entry.type == TypeEntry::Static) ? "STATIC" : "BLACKHOLE";
+
+        QString portStr = (entry.portIndex >= 0 && entry.portIndex < m_device->getPorts().size())
+            ? m_device->getPorts()[entry.portIndex].name
+            : "Drop";
+
+        // Выравниваем колонки пробелами
+        m_outputView->appendPlainText(QString("%1    %2  %3     %4")
+            .arg(entry.VlanID, -4)
+            .arg(entry.macAddress, -16)
+            .arg(typeStr, -10)
+            .arg(portStr));
+    }
+
+    m_outputView->appendPlainText(QString("\nВсего записей в таблице: %1\n").arg(table->getSize()));
+}

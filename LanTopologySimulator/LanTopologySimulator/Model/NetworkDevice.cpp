@@ -9,9 +9,11 @@ NetworkDevice::NetworkDevice(const QString& name, const QString& ip, DeviceType 
 	m_isOnline(true)
 {
 	initPorts();
+	if (m_type == DeviceType::Switch) { //Создаем таблицу для свитча
+		m_macTable = new MacTable(300);
+	}
 }
-
-
+NetworkDevice::~NetworkDevice() { delete m_macTable;}
 
 QString NetworkDevice::generateRandomMac() {
 	std::random_device rd; //Источник энтропии
