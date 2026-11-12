@@ -99,6 +99,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Graphics\CableItem.cpp" />
+    <ClCompile Include="Model\ArpTable.cpp" />
     <ClCompile Include="Model\MacTable.cpp" />
     <ClCompile Include="Model\NetworkDevice.cpp" />
     <ClCompile Include="Graphics\NodeItem.cpp" />
@@ -119,6 +120,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Model\ArpTable.h" />
     <ClInclude Include="Model\MacTable.h" />
     <ClInclude Include="UI\ConnectionDialog.h" />
     <ClInclude Include="UI\TerminalWidget.h" />

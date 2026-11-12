@@ -103,6 +103,12 @@ void TerminalWidget::executeCommand(const QString& rawCommand) {
     else if (cmd == "show" || cmd == "mac-table") {
         cmdShowMacTable(tokens);
     }
+    else if (cmd == "arp") {
+        cmdArp(tokens);
+    }
+    else if (cmd == "ping") {
+        cmdPing(tokens);
+    }
     else {
         // Ошибка неизвестной команды
         m_outputView->appendPlainText(QString("'%1' не является внутренней или внешней командой.")
@@ -119,6 +125,8 @@ void TerminalWidget::cmdHelp() {
 	m_outputView->appendPlainText("  ipconfig/ifconfig   - вывод сетевой конфигурации интерфейса");
     m_outputView->appendPlainText("  cls/clear             - очистка терминала");
 	m_outputView->appendPlainText("  ping                  - проверка доступности узла по IP");
+    m_outputView->appendPlainText("  arp -a             - просмотр таблицы соответствия IP и MAC адресов");
+    m_outputView->appendPlainText("  arp -d             - очистка ARP-кэша");
 }
 
 void TerminalWidget::cmdIpconfig() {
@@ -147,17 +155,6 @@ void TerminalWidget::cmdIpconfig() {
 void TerminalWidget::cmdClear() {
     m_outputView->clear();
 }
-
-
-
-
-
-
-void TerminalWidget::cmdPing(const QStringList& args) {
-
-}  
-
-
 
 void TerminalWidget::cmdShowMacTable(const QStringList& tokens)
 {
@@ -199,4 +196,70 @@ void TerminalWidget::cmdShowMacTable(const QStringList& tokens)
     }
 
     m_outputView->appendPlainText(QString("\nВсего записей в таблице: %1\n").arg(table->getSize()));
+}
+
+
+void TerminalWidget::cmdArp(const QStringList& tokens) {
+    if (!m_device) return;
+    // ПРОВЕРКА РОЛИ: Коммутатор L2 не использует ARP для чужого трафика!
+    if (m_device->getType() == DeviceType::Switch) {
+        m_outputView->appendPlainText("Ошибка: коммутатор (L2 Switch) не использует протокол ARP.");
+        m_outputView->appendPlainText("Для просмотра таблицы коммутации используйте: show mac-address-table\n");
+        return;
+    }
+
+    ArpTable* arp = m_device->getArpTable();
+    if (!arp) return;
+
+    // Флаг очистки кэша: arp -d
+    if (tokens.size() > 1 && tokens[1].toLower() == "-d") {
+        arp->clear();
+        m_outputView->appendPlainText("ARP-кэш успешно очищен.\n");
+        return;
+    }
+
+    // Если таблица пуста (пока не было сетевых пакетов)
+    if (arp->size() == 0) {
+        m_outputView->appendPlainText(QString("Интерфейс: %1 --- 0x1").arg(m_device->getIP()));
+        m_outputView->appendPlainText("  ARP-таблица пуста (записи появятся после первого обмена пакетами ping).\n");
+        return;
+    }
+
+    // Форматированный вывод таблицы в стиле Windows cmd
+    m_outputView->appendPlainText(QString("Интерфейс: %1 --- 0x1").arg(m_device->getIP()));
+    m_outputView->appendPlainText("  Интернет-адрес        Физический адрес     Тип");
+    m_outputView->appendPlainText("  --------------------  -------------------  ------------");
+
+    for (const auto& entry : arp->getEntries()) {
+        QString typeStr = (entry.type == ArpEntryType::Dynamic) ? "динамический" : "статический";
+        m_outputView->appendPlainText(QString("  %1  %2  %3")
+            .arg(entry.ip, -20)
+            .arg(entry.mac, -19)
+            .arg(typeStr));
+    }
+    m_outputView->appendPlainText(""); // Пустая строка для отступа
+}
+
+
+void TerminalWidget::cmdPing(const QStringList& tokens)
+{
+    if (!m_device) return;
+
+    // Проверка аргументов: пользователь должен ввести IP
+    if (tokens.size() < 2) {
+        m_outputView->appendPlainText("Использование: ping <IP-адрес>\nПример: ping 192.168.0.21\n");
+        return;
+    }
+
+    QString targetIp = tokens[1].trimmed();
+
+    // Запускаем сетевой движок симуляции
+    QStringList logLines;
+    m_device->ping(targetIp, logLines);
+
+    // Выводим результат в окно терминала
+    for (const auto& line : logLines) {
+        m_outputView->appendPlainText(line);
+    }
+    m_outputView->appendPlainText(""); // Отступ
 }

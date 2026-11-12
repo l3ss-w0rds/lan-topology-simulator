@@ -3,7 +3,12 @@
 #include <random>
 #include <QDebug>
 #include <QVector>
+#include <QStringList>
+#include <QQueue>
+#include <QSet>
+#include <QMap>
 #include "MacTable.h"
+#include "ArpTable.h"
 
 enum class DeviceType {
 	PC,
@@ -32,11 +37,15 @@ public:
 	QString getTerminalHistory() const { return m_terminalHistory; }
 	const QVector<NetworkPort>& getPorts() const { return m_ports; }
 	MacTable* getMacTable() const { return m_macTable; }
+	ArpTable* getArpTable() const { return m_arpTable; }
+	int getPortIndexConnectedTo(NetworkDevice* targetDevice) const; // Возвращает индекс порта, через который мы подключены к целевому устройству. -1 если не подключены напрямую
+	
 
 	QVector<NetworkPort> getFreePorts() const; //Возврощает список свободных портов устройства
 	bool hasFreePorts() const; //Проверка на наличие свободных портов
 	bool connectPort(const QString& myPortName, NetworkDevice* otherDevice, const QString& otherPortName); //занять порт подклчением
 	void disconnectPort(const QString& myPortName); //освободить порт
+	bool ping(const QString& targetIp, QStringList& outLog); //Симуляция сетевого Ping (проходит по графу, обучает свитчи, заполняет ARP)
 
 	//Сеттеры изменяют свойства объекта
 	void setName(const QString& name) { m_name = name; }
@@ -61,6 +70,6 @@ private:
 	//QList <NetworkDevice*> m_connectedDevices; //Список подключенных устройств
 	QVector<NetworkPort> m_ports; //Список портов устройства
 	MacTable* m_macTable = nullptr; //Табл. мак для свитча
-
+	ArpTable* m_arpTable = nullptr; // ARP-кэш (для PC, Server, Router)???????????????????????????????????
 };
 

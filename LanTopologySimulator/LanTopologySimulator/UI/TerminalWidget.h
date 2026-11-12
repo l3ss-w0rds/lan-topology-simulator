@@ -20,6 +20,7 @@ private:
 	void cmdIpconfig(); // Вывод информации о сетевых интерфейсах
 	void cmdPing(const QStringList& args); // Команда ping
     void cmdShowMacTable(const QStringList& tokens);
+    void cmdArp(const QStringList& tokens);
 
 
 private:
