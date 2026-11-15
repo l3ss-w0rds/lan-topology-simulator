@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #pragma once
 #include <QString>
@@ -6,32 +6,32 @@
 #include <QDateTime>
 
 enum class ArpEntryType {
-    Dynamic, // Запись получена автоматически через ARP-ответ
-    Static   // Задана вручную администратором
+    Dynamic, // Р—Р°РїРёСЃСЊ РїРѕР»СѓС‡РµРЅР° Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё С‡РµСЂРµР· ARP-РѕС‚РІРµС‚
+    Static   // Р—Р°РґР°РЅР° РІСЂСѓС‡РЅСѓСЋ Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂРѕРј
 };
 
 struct ArpEntry {
-    QString ip; // IPv4-адрес
-    QString mac;// Соответствующий MAC-адрес
+    QString ip; // IPv4-Р°РґСЂРµСЃ
+    QString mac;// РЎРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‰РёР№ MAC-Р°РґСЂРµСЃ
     ArpEntryType type = ArpEntryType::Dynamic;
-    QDateTime timestamp; // Время жизни записи (старение кэша)
+    QDateTime timestamp; // Р’СЂРµРјСЏ Р¶РёР·РЅРё Р·Р°РїРёСЃРё (СЃС‚Р°СЂРµРЅРёРµ РєСЌС€Р°)
 };
 
 class ArpTable {
 public:
-    explicit ArpTable(int ttlSeconds = 120); //ARP-кэш живет 2 мин
+    explicit ArpTable(int ttlSeconds = 120); //ARP-РєСЌС€ Р¶РёРІРµС‚ 2 РјРёРЅ
     ~ArpTable() = default;
 
-    void addEntry(const QString& ip, const QString& mac, ArpEntryType type = ArpEntryType::Dynamic); // Добавить или обновить запись в кэше
-    QString lookupMac(const QString& ip) const; // Поиск MAC-адреса по IP
-    bool hasEntry(const QString& ip) const; // Проверка наличия записи
-    void cleanExpired(); // Очистка устаревших записей
-    void clear(); // Полная очистка кэша
+    void addEntry(const QString& ip, const QString& mac, ArpEntryType type = ArpEntryType::Dynamic); // Р”РѕР±Р°РІРёС‚СЊ РёР»Рё РѕР±РЅРѕРІРёС‚СЊ Р·Р°РїРёСЃСЊ РІ РєСЌС€Рµ
+    QString lookupMac(const QString& ip) const; // РџРѕРёСЃРє MAC-Р°РґСЂРµСЃР° РїРѕ IP
+    bool hasEntry(const QString& ip) const; // РџСЂРѕРІРµСЂРєР° РЅР°Р»РёС‡РёСЏ Р·Р°РїРёСЃРё
+    void cleanExpired(); // РћС‡РёСЃС‚РєР° СѓСЃС‚Р°СЂРµРІС€РёС… Р·Р°РїРёСЃРµР№
+    void clear(); // РџРѕР»РЅР°СЏ РѕС‡РёСЃС‚РєР° РєСЌС€Р°
 
-    // Получение всех записей (для команды arp -a и интерфейса)
+    // РџРѕР»СѓС‡РµРЅРёРµ РІСЃРµС… Р·Р°РїРёСЃРµР№ (РґР»СЏ РєРѕРјР°РЅРґС‹ arp -a Рё РёРЅС‚РµСЂС„РµР№СЃР°)
     const QVector<ArpEntry>& getEntries() const { return m_entries; }
     int size() const { return m_entries.size(); }
 private:
     QVector<ArpEntry> m_entries;
-    int m_ttlSeconds; // Время жизни динамических записей в секундах
+    int m_ttlSeconds; // Р’СЂРµРјСЏ Р¶РёР·РЅРё РґРёРЅР°РјРёС‡РµСЃРєРёС… Р·Р°РїРёСЃРµР№ РІ СЃРµРєСѓРЅРґР°С…
 };

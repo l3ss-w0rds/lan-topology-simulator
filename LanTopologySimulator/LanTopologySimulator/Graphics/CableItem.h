@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include <QGraphicsItem>
 #include <QPen>
 #include <QFontMetrics>
@@ -7,10 +7,10 @@
 class NodeItem;
 
 enum class CableType{
-TwistedPair, //Витая пара(Медь, 1Гб/с, черный)
-OpticalFiber, //Оптоволокно (10Гб/с, оранжевый)
-CoaxialCable, //Коаксиалка (темно-синий)
-ConsoleCable //Консольный (голубой)
+TwistedPair, //Р’РёС‚Р°СЏ РїР°СЂР°(РњРµРґСЊ, 1Р“Р±/СЃ, С‡РµСЂРЅС‹Р№)
+OpticalFiber, //РћРїС‚РѕРІРѕР»РѕРєРЅРѕ (10Р“Р±/СЃ, РѕСЂР°РЅР¶РµРІС‹Р№)
+CoaxialCable, //РљРѕР°РєСЃРёР°Р»РєР° (С‚РµРјРЅРѕ-СЃРёРЅРёР№)
+ConsoleCable //РљРѕРЅСЃРѕР»СЊРЅС‹Р№ (РіРѕР»СѓР±РѕР№)
 };
 class CableItem : public QGraphicsLineItem {
 	public:
@@ -19,20 +19,21 @@ class CableItem : public QGraphicsLineItem {
 			      QGraphicsItem* parent = nullptr);
 		~CableItem() override;
 
-		void trackNodes(); //пересчитываем координаты линии между центрами узлов
+		void trackNodes(); //РїРµСЂРµСЃС‡РёС‚С‹РІР°РµРј РєРѕРѕСЂРґРёРЅР°С‚С‹ Р»РёРЅРёРё РјРµР¶РґСѓ С†РµРЅС‚СЂР°РјРё СѓР·Р»РѕРІ
 
 		NodeItem* getStartNode() const { return m_startNode; }
 		NodeItem* getEndNode() const { return m_endNode; }
 		CableType getCableType() const { return m_type; }
-		//Управление видимостью портов, созданы в единственн. экземпляре
-		static bool s_showPorts; //флаг видимости портов
-		static void setShowPorts(bool show) { s_showPorts = show; } //устанавливаем видимость портов
-		static bool isShowPorts() { return s_showPorts; } //получаем видимость портов
-		static void drawPortBadge(QPainter* painter, const QPointF& centerPos, const QString& portName); //отрисовка одной смарт-капсулы порта
 
-		QPainterPath shape() const override; //для выделения кабеля мышкой
-		void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override; //рисуем кабель
-		QRectF boundingRect() const override; //границы кабеля для сцены
+		//РЈРїСЂР°РІР»РµРЅРёРµ РІРёРґРёРјРѕСЃС‚СЊСЋ РїРѕСЂС‚РѕРІ, СЃРѕР·РґР°РЅС‹ РІ РµРґРёРЅСЃС‚РІРµРЅРЅ. СЌРєР·РµРјРїР»СЏСЂРµ
+		static bool s_showPorts; //С„Р»Р°Рі РІРёРґРёРјРѕСЃС‚Рё РїРѕСЂС‚РѕРІ
+		static void setShowPorts(bool show) { s_showPorts = show; } //СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј РІРёРґРёРјРѕСЃС‚СЊ РїРѕСЂС‚РѕРІ
+		static bool isShowPorts() { return s_showPorts; } //РїРѕР»СѓС‡Р°РµРј РІРёРґРёРјРѕСЃС‚СЊ РїРѕСЂС‚РѕРІ
+		static void drawPortBadge(QPainter* painter, const QPointF& centerPos, const QString& portName); //РѕС‚СЂРёСЃРѕРІРєР° РѕРґРЅРѕР№ СЃРјР°СЂС‚-РєР°РїСЃСѓР»С‹ РїРѕСЂС‚Р°
+
+		QPainterPath shape() const override; //РґР»СЏ РІС‹РґРµР»РµРЅРёСЏ РєР°Р±РµР»СЏ РјС‹С€РєРѕР№
+		void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override; //СЂРёСЃСѓРµРј РєР°Р±РµР»СЊ
+		QRectF boundingRect() const override; //РіСЂР°РЅРёС†С‹ РєР°Р±РµР»СЏ РґР»СЏ СЃС†РµРЅС‹
 
 
 

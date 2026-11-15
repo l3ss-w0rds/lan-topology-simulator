@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include <QGraphicsItem>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
@@ -7,21 +7,21 @@
 
 class CableItem;
 
-class NodeItem : public QGraphicsItem //объединяет в себе графику и сетевые данные
+class NodeItem : public QGraphicsItem //РѕР±СЉРµРґРёРЅСЏРµС‚ РІ СЃРµР±Рµ РіСЂР°С„РёРєСѓ Рё СЃРµС‚РµРІС‹Рµ РґР°РЅРЅС‹Рµ
 {
 public:
 	explicit NodeItem(NetworkDevice* device, QGraphicsItem* parent = nullptr);
 	~NodeItem() override;
 
-	QRectF boundingRect() const override; //Возврощает прямоугольник габарита узалов
-	void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override; //Рисует фигурку, иконку и подписи на сцене
-	void addCable(CableItem* cable); //Добавляет кабель к узлу
-	void removeCable(CableItem* cable); //Удаляет кабель из узла
+	QRectF boundingRect() const override; //Р’РѕР·РІСЂРѕС‰Р°РµС‚ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРє РіР°Р±Р°СЂРёС‚Р° СѓР·Р°Р»РѕРІ
+	void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override; //Р РёСЃСѓРµС‚ С„РёРіСѓСЂРєСѓ, РёРєРѕРЅРєСѓ Рё РїРѕРґРїРёСЃРё РЅР° СЃС†РµРЅРµ
+	void addCable(CableItem* cable); //Р”РѕР±Р°РІР»СЏРµС‚ РєР°Р±РµР»СЊ Рє СѓР·Р»Сѓ
+	void removeCable(CableItem* cable); //РЈРґР°Р»СЏРµС‚ РєР°Р±РµР»СЊ РёР· СѓР·Р»Р°
 
 	NetworkDevice* getDevice() const { return m_device; }
 	const QList<CableItem*>& getCables() const { return m_cables; }
 protected:
-	QVariant itemChange(GraphicsItemChange change, const QVariant& value) override; //датчик движения в Qt
+	QVariant itemChange(GraphicsItemChange change, const QVariant& value) override; //РґР°С‚С‡РёРє РґРІРёР¶РµРЅРёСЏ РІ Qt
 private:
 	NetworkDevice* m_device;
 	QList<CableItem*> m_cables;

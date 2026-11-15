@@ -1,7 +1,7 @@
-#include "CableItem.h"
+п»ї#include "CableItem.h"
 #include "NodeItem.h"
 
-bool CableItem::s_showPorts = true; //по умолчанию порты видны
+bool CableItem::s_showPorts = true; //РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РїРѕСЂС‚С‹ РІРёРґРЅС‹
 
 CableItem::CableItem(NodeItem* startNode, NodeItem* endNode, CableType type, const QString startPort, const QString endPort, QGraphicsItem* parent)
 	: QGraphicsLineItem(parent),
@@ -34,11 +34,11 @@ CableItem::CableItem(NodeItem* startNode, NodeItem* endNode, CableType type, con
 }
 
 CableItem::~CableItem() {
-	//Освобождаем порты в МОДЕЛИ при удалении кабеля
+	//РћСЃРІРѕР±РѕР¶РґР°РµРј РїРѕСЂС‚С‹ РІ РњРћР”Р•Р›Р РїСЂРё СѓРґР°Р»РµРЅРёРё РєР°Р±РµР»СЏ
 	if (m_startNode && m_endNode && m_startNode->getDevice() && m_endNode->getDevice()) {
 		m_startNode->getDevice()->disconnectedFrom(m_endNode->getDevice());
 	}
-	//Отвязываем провод от узлов в ГРАФИКЕ
+	//РћС‚РІСЏР·С‹РІР°РµРј РїСЂРѕРІРѕРґ РѕС‚ СѓР·Р»РѕРІ РІ Р“Р РђР¤РРљР•
 	if (m_startNode) {
 		m_startNode->removeCable(this);
 	}
@@ -49,11 +49,11 @@ CableItem::~CableItem() {
 
 void CableItem::trackNodes() {
 	if (!m_startNode || !m_endNode) return;
-	prepareGeometryChange(); //обновление индекса сцены
+	prepareGeometryChange(); //РѕР±РЅРѕРІР»РµРЅРёРµ РёРЅРґРµРєСЃР° СЃС†РµРЅС‹
 
 	QPointF p1 = m_startNode->sceneBoundingRect().center();
 	QPointF p2 = m_endNode->sceneBoundingRect().center();
-	setLine(QLineF(p1, p2)); //Проводим линию между центрами узлов
+	setLine(QLineF(p1, p2)); //РџСЂРѕРІРѕРґРёРј Р»РёРЅРёСЋ РјРµР¶РґСѓ С†РµРЅС‚СЂР°РјРё СѓР·Р»РѕРІ
 }
 QPainterPath CableItem::shape() const{
 	QPainterPath path;
@@ -61,7 +61,7 @@ QPainterPath CableItem::shape() const{
 	path.lineTo(line().p2());
 
 	QPainterPathStroker stroker;
-	stroker.setWidth(12); //ширина выделения мышкой	
+	stroker.setWidth(12); //С€РёСЂРёРЅР° РІС‹РґРµР»РµРЅРёСЏ РјС‹С€РєРѕР№	
 	return stroker.createStroke(path);
 }
 
@@ -73,35 +73,35 @@ void CableItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
 	qreal len = curLine.length();
 	if (len < 1.0) return;
 
-	// Включаем сглаживание
+	// Р’РєР»СЋС‡Р°РµРј СЃРіР»Р°Р¶РёРІР°РЅРёРµ
 	painter->setRenderHint(QPainter::Antialiasing, true);
-//ОТРИСОВКА САМОЙ ЛИНИИ КАБЕЛЯ
+//РћРўР РРЎРћР’РљРђ РЎРђРњРћР™ Р›РРќРР РљРђР‘Р•Р›РЇ
 	QPen pen;
 	pen.setWidth(3);
-	pen.setCapStyle(Qt::RoundCap); // Скругленные аккуратные концы
+	pen.setCapStyle(Qt::RoundCap); // РЎРєСЂСѓРіР»РµРЅРЅС‹Рµ Р°РєРєСѓСЂР°С‚РЅС‹Рµ РєРѕРЅС†С‹
 
 	if (isSelected()) {
-		pen.setColor(Qt::red); // Цвет выделения
-		pen.setStyle(Qt::DashLine); // Пунктирная линия при выделении
+		pen.setColor(Qt::red); // Р¦РІРµС‚ РІС‹РґРµР»РµРЅРёСЏ
+		pen.setStyle(Qt::DashLine); // РџСѓРЅРєС‚РёСЂРЅР°СЏ Р»РёРЅРёСЏ РїСЂРё РІС‹РґРµР»РµРЅРёРё
 	}
 	else {
 		pen.setColor(m_type == CableType::TwistedPair ? QColor("#2563EB") :
 			m_type == CableType::OpticalFiber ? QColor("#F59E0B") :
 			m_type == CableType::CoaxialCable ? QColor("#1E293B") :
-			QColor("#06B6D4")); // Цвет кабеля в зависимости от типа
+			QColor("#06B6D4")); // Р¦РІРµС‚ РєР°Р±РµР»СЏ РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ С‚РёРїР°
 	}
 	painter->setPen(pen);
 	painter->drawLine(line());
 
-//ОТРИСОВКА СМАРТ-КАПСУЛ ПОРТОВ
+//РћРўР РРЎРћР’РљРђ РЎРњРђР Рў-РљРђРџРЎРЈР› РџРћР РўРћР’
 	if ((s_showPorts || isSelected()) && len > 95.0) {
-		qreal offset = 40.0; // Отступ от центра устройства к краю иконки
+		qreal offset = 40.0; // РћС‚СЃС‚СѓРї РѕС‚ С†РµРЅС‚СЂР° СѓСЃС‚СЂРѕР№СЃС‚РІР° Рє РєСЂР°СЋ РёРєРѕРЅРєРё
 
-		// Точка первого порта
+		// РўРѕС‡РєР° РїРµСЂРІРѕРіРѕ РїРѕСЂС‚Р°
 		QPointF p1 = curLine.pointAt(offset / len);
 		drawPortBadge(painter, p1, m_startPort);
 
-		// Точка второго порта
+		// РўРѕС‡РєР° РІС‚РѕСЂРѕРіРѕ РїРѕСЂС‚Р°
 		QPointF p2 = curLine.pointAt((len - offset) / len);
 		drawPortBadge(painter, p2, m_endPort);
 	}
@@ -118,7 +118,7 @@ void CableItem::drawPortBadge(QPainter* painter, const QPointF& centerPos, const
 
 	painter->save();
 
-	//Настройка шрифта
+	//РќР°СЃС‚СЂРѕР№РєР° С€СЂРёС„С‚Р°
 	QFont font("Segoe UI", 8, QFont::DemiBold);
 	painter->setFont(font);
 	QFontMetrics fm(font);
@@ -126,7 +126,7 @@ void CableItem::drawPortBadge(QPainter* painter, const QPointF& centerPos, const
 	int textWidth = fm.horizontalAdvance(portName);
 	int textHeight = fm.height();
 
-	// Размеры капсулы (с учетом зеленой точки и отступов)
+	// Р Р°Р·РјРµСЂС‹ РєР°РїСЃСѓР»С‹ (СЃ СѓС‡РµС‚РѕРј Р·РµР»РµРЅРѕР№ С‚РѕС‡РєРё Рё РѕС‚СЃС‚СѓРїРѕРІ)
 	int badgeWidth = textWidth + 18;
 	int badgeHeight = textHeight + 4;
 
@@ -134,19 +134,19 @@ void CableItem::drawPortBadge(QPainter* painter, const QPointF& centerPos, const
 		centerPos.y() - badgeHeight / 2.0,
 		badgeWidth, badgeHeight);
 
-	//Белая плашка с мягкой серой границей
+	//Р‘РµР»Р°СЏ РїР»Р°С€РєР° СЃ РјСЏРіРєРѕР№ СЃРµСЂРѕР№ РіСЂР°РЅРёС†РµР№
 	painter->setPen(QPen(QColor("#CBD5E1"), 1.0));
 	painter->setBrush(QBrush(QColor("#FFFFFF")));
 	painter->drawRoundedRect(badgeRect, 4.0, 4.0);
 
-	//Зеленый светодиод линка
+	//Р—РµР»РµРЅС‹Р№ СЃРІРµС‚РѕРґРёРѕРґ Р»РёРЅРєР°
 	painter->setPen(Qt::NoPen);
-	painter->setBrush(QBrush(QColor("#10B981"))); //Изумрудно-зеленый
+	painter->setBrush(QBrush(QColor("#10B981"))); //РР·СѓРјСЂСѓРґРЅРѕ-Р·РµР»РµРЅС‹Р№
 	QPointF dotCenter(badgeRect.left() + 7, badgeRect.center().y());
 	painter->drawEllipse(dotCenter, 2.5, 2.5);
 
-	//Текст названия порта
-	painter->setPen(QPen(QColor("#0F172A"))); // Глубокий графитовый цвет текста
+	//РўРµРєСЃС‚ РЅР°Р·РІР°РЅРёСЏ РїРѕСЂС‚Р°
+	painter->setPen(QPen(QColor("#0F172A"))); // Р“Р»СѓР±РѕРєРёР№ РіСЂР°С„РёС‚РѕРІС‹Р№ С†РІРµС‚ С‚РµРєСЃС‚Р°
 	QRectF textRect(badgeRect.left() + 13, badgeRect.top(), textWidth + 2, badgeHeight);
 	painter->drawText(textRect, Qt::AlignCenter, portName);
 

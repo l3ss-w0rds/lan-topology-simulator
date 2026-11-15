@@ -4,11 +4,11 @@
 #include "CableItem.h"
 #include "ConnectionDialog.h"
 
-LanTopologySimulator::LanTopologySimulator(QWidget *parent)
-    : QMainWindow(parent)
+LanTopologySimulator::LanTopologySimulator(QWidget* parent)
+	: QMainWindow(parent)
 {
-    ui.setupUi(this);
-	   
+	ui.setupUi(this);
+
 	//Делаем кнопки переключаемыми
 	ui.actionCable->setCheckable(true);
 	ui.actionDelete->setCheckable(true);
@@ -43,7 +43,8 @@ LanTopologySimulator::LanTopologySimulator(QWidget *parent)
 }
 
 LanTopologySimulator::~LanTopologySimulator()
-{}
+{
+}
 
 void LanTopologySimulator::on_btnPC_clicked()
 {
@@ -51,7 +52,7 @@ void LanTopologySimulator::on_btnPC_clicked()
 	pcNumber++;
 
 	QString name = QString("PC%1").arg(pcNumber); //Имя ПК
-	QString ip = QString("192.168.0.%1").arg(10+pcNumber); //IP адрес ПК)
+	QString ip = QString("192.168.0.%1").arg(10 + pcNumber); //IP адрес ПК)
 
 	NetworkDevice* device = new NetworkDevice(name, ip, DeviceType::PC); //Создаем объект ПК
 
@@ -199,10 +200,11 @@ void LanTopologySimulator::on_actionCursor_triggered() {
 void LanTopologySimulator::on_actionTogglePorts_triggered() {
 	bool show = ui.actionTogglePorts->isChecked();
 	CableItem::setShowPorts(show); //Меняем глобальный флаг видимости портов для всех кабелей
-	m_scene->update(); 
+	m_scene->update();
 	if (show) {
 		ui.logTextEdit->appendPlainText(QStringLiteral("[ВИД] Подписи портов включены."));
-	} else {
+	}
+	else {
 		ui.logTextEdit->appendPlainText(QStringLiteral("[ВИД] Подписи портов скрыты."));
 	}
 }
@@ -232,6 +234,7 @@ bool LanTopologySimulator::eventFilter(QObject* obj, QEvent* event) {
 				// Открываем диалог модально (блокирует ввод до закрытия)
 				DevicePropertiesDialog dialog(node->getDevice(), this);
 				dialog.exec();
+				m_scene->update();
 				return true; // Событие обработано!
 			}
 		}
@@ -272,8 +275,8 @@ bool LanTopologySimulator::eventFilter(QObject* obj, QEvent* event) {
 				item = item->parentItem();
 			}
 
-			NodeItem *clickedNode = dynamic_cast<NodeItem*>(item); //проверка
-			if (!clickedNode) return QMainWindow::eventFilter(obj, event); 
+			NodeItem* clickedNode = dynamic_cast<NodeItem*>(item); //проверка
+			if (!clickedNode) return QMainWindow::eventFilter(obj, event);
 			handleCableConnection(clickedNode);
 			return true; //блокирвоание перетаскивания
 		}
@@ -294,13 +297,13 @@ void LanTopologySimulator::keyPressEvent(QKeyEvent* event)
 	QMainWindow::keyPressEvent(event);
 }
 
-void LanTopologySimulator::handleCableConnection(NodeItem* clickedNode){
+void LanTopologySimulator::handleCableConnection(NodeItem* clickedNode) {
 	if (!clickedNode || !clickedNode->getDevice()) return;
 	if (m_firstCableNode == nullptr) {
 		m_firstCableNode = clickedNode;
 		m_firstCableNode->setSelected(true); //син. рамка
 		ui.logTextEdit->appendPlainText("Первый узел выбран:" + m_firstCableNode->getDevice()->getName() + "\n"
-		+ " Теперь кликните по второму устройству.");
+			+ " Теперь кликните по второму устройству.");
 		return;
 	}
 
@@ -327,7 +330,7 @@ void LanTopologySimulator::handleCableConnection(NodeItem* clickedNode){
 
 	//Открываем диалог подключения у мышки
 	ConnectionDialog dialog(dev1, dev2, this);
-	dialog.move(QCursor::pos()); 
+	dialog.move(QCursor::pos());
 
 	//Если пользователь нажал "Подключить" (или просто Enter)
 	if (dialog.exec() == QDialog::Accepted) {
@@ -378,7 +381,7 @@ void LanTopologySimulator::deleteSelectedItems() {
 
 	//Удаляем кабели, чтобы не оставалось висячих проводов на удаляемых узлах
 	for (CableItem* cable : cablesToDelete) {
-		delete cable; 
+		delete cable;
 	}
 	//Удаляем узлы
 	for (NodeItem* node : nodesToDelete) {
@@ -387,7 +390,7 @@ void LanTopologySimulator::deleteSelectedItems() {
 		}
 
 		QString devName = node->getDevice() ? node->getDevice()->getName() : "Устройство";
-		delete node; 
+		delete node;
 
 		ui.logTextEdit->appendPlainText(QString("[УДАЛЕНИЕ] %1 удален.").arg(devName));
 	}

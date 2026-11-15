@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <QDialog>
 #include "NetworkDevice.h"
 #include "TerminalWidget.h"
@@ -6,10 +6,12 @@
 #include <QTableWidgetItem>            
 #include <QHeaderView>
 #include <QVBoxLayout>
+#include <QComboBox>
+#include <QMessageBox>
 
 
 
-// ��������� � ������ �� Qt Designer
+// Связываем с формой из Qt Designer
 namespace Ui {
     class DevicePropertiesDialog;
 }
@@ -24,10 +26,15 @@ public:
 
 
 private:
-    void loadData();       // ��������� ���, IP � MAC � �����
-    void loadPortsTable(); // ��������� ������� ������ ��������� ������� �� ������
+    void loadData();       // Загружает имя, IP и MAC в форму
+    void loadPortsTable(); // Наполняет таблицу портов реальными данными из черновика
+    void loadSelectedInterface(int index); //Загружает данные выбранные из черновика в соотв. поля ввода
+    void storeSelectedInterface(); //Сохраняем текущее значение из полей ввода обратно в черновик для выбранного порта
+    void saveConfiguration(); //Применяет черновик к реальному устройству
 
 private:
-    Ui::DevicePropertiesDialog* ui; // ������ �� ���� ��������� ����� UI-�����
-    NetworkDevice* m_device;
+    Ui::DevicePropertiesDialog* ui; 
+    NetworkDevice* m_device =nullptr;
+    QVector<NetworkPort> m_draft;
+    int m_selectedPort = -1;
 };

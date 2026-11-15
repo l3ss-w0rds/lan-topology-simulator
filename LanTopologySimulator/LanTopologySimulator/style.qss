@@ -334,3 +334,12 @@ QStatusBar {
     color: #64748B;
     font-size: 12px;
 }
+/* Terminal: moved from TerminalWidget::setupUI */
+#terminalRoot {   background-color: #0F0F0F;   border: 1px solid #2A2A2A;   border-radius: 6px;}#terminalRoot QLabel {   background-color: transparent;   font-family: 'Consolas';   font-size: 13px;}#terminalRoot QLabel#terminalTitle {   color: #22C55E;}#terminalRoot QLabel#terminalPrompt {   color: #D4D4D4;   font-weight: bold;}#terminalRoot QFrame#terminalSep {   background-color: #2A2A2A;   border: none;}#terminalRoot QPlainTextEdit#terminalOutput {   background-color: #0F0F0F;   color: #22C55E;   border: none;   border-radius: 0px;   padding: 0px;   font-family: 'Consolas';   font-size: 13px;   selection-background-color: #14532D;   selection-color: #22C55E;}#terminalRoot QLineEdit#terminalInput,#terminalRoot QLineEdit#terminalInput:hover,#terminalRoot QLineEdit#terminalInput:focus {   background-color: #0F0F0F;   color: #22C55E;   border: none;   border-radius: 0px;   padding: 2px 0px;   font-family: 'Consolas';   font-size: 13px;   selection-background-color: #14532D;   selection-color: #22C55E;}#terminalRoot QScrollBar:vertical {   background: transparent; width: 8px; margin: 0; border: none;}#terminalRoot QScrollBar::handle:vertical {   background: #2E2E2E; border-radius: 4px; min-height: 24px;}#terminalRoot QScrollBar::handle:vertical:hover {   background: #444444;}#terminalRoot QScrollBar::add-line:vertical,#terminalRoot QScrollBar::sub-line:vertical {   height: 0; border: none;}#terminalRoot QScrollBar::add-page:vertical,#terminalRoot QScrollBar::sub-page:vertical {   background: none;}
+/* Device configuration */
+QLabel#dialogHeading { font-size: 20px; font-weight: bold; color: #0F172A; padding: 4px 0; }
+QLabel#configurationHint, QLabel#footerHint { color: #64748B; font-size: 12px; }
+QLabel#saveStatus { color: #B91C1C; }
+QLabel#macLabel { font-family: Consolas; color: #2563EB; padding: 3px; }
+QPushButton#okButton { background: #2563EB; color: white; padding: 8px 18px; }
+QPushButton#okButton:hover { background: #1D4ED8; }

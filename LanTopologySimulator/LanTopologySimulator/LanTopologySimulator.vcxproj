@@ -110,7 +110,7 @@
       <QtMocFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).moc</QtMocFileName>
     </ClCompile>
     <QtRcc Include="LanTopologySimulator.qrc" />
-    <QtUic Include="DevicePropertiesDialog.ui" />
+    <QtUic Include="UI\DevicePropertiesDialog.ui" />
     <QtUic Include="UI\LanTopologySimulator.ui" />
     <QtMoc Include="UI\LanTopologySimulator.h">
       <DeploymentContent>false</DeploymentContent>
@@ -126,6 +126,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Model\ArpTable.h" />
+    <ClInclude Include="Model\Ipv4Utils.h" />
     <ClInclude Include="Model\MacTable.h" />
     <ClInclude Include="UI\ConnectionDialog.h" />
     <QtMoc Include="UI\TerminalWidget.h" />

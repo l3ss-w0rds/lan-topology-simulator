@@ -1,4 +1,4 @@
-#include "MacTable.h"
+п»ї#include "MacTable.h"
 
 MacTable::MacTable(int agingTimeSec):
 m_agingTimeSec(agingTimeSec){
@@ -10,53 +10,53 @@ QString MacTable::makeKey(const QString& mac, int VlanID) const {
 
 void MacTable::learn(const QString& mac, int portIndex, int VlanID) {
     if (mac.isEmpty() || portIndex < 0 || VlanID < 1 || VlanID > 4094) {
-        qWarning() << "Неправильные параметры для обучения: mac=" << mac << ", portIndex=" << portIndex << ", VlanID=" << VlanID;
+        qWarning() << "РќРµРїСЂР°РІРёР»СЊРЅС‹Рµ РїР°СЂР°РјРµС‚СЂС‹ РґР»СЏ РѕР±СѓС‡РµРЅРёСЏ: mac=" << mac << ", portIndex=" << portIndex << ", VlanID=" << VlanID;
         return;
 	}
 	QString key = makeKey(mac, VlanID); //VLAN:MAC
     if (m_macTable.contains(key)) {
         if (m_macTable[key].type == TypeEntry::Static || m_macTable[key].type == TypeEntry::Blackhole) return;
     }
-//ДОБАВЛЕНИЕ В ТАБЛИЦУ ЗАПИСИ
+//Р”РћР‘РђР’Р›Р•РќРР• Р’ РўРђР‘Р›РР¦РЈ Р—РђРџРРЎР
 	MacEntry entry;
     entry.VlanID = VlanID;
     entry.macAddress = mac.trimmed().toUpper();
     entry.type = TypeEntry::Dynamic;
     entry.portIndex = portIndex;
-	entry.timestamp = QDateTime::currentDateTime(); //обнуляем таймер старения
+	entry.timestamp = QDateTime::currentDateTime(); //РѕР±РЅСѓР»СЏРµРј С‚Р°Р№РјРµСЂ СЃС‚Р°СЂРµРЅРёСЏ
 	entry.isValid = true;
 	m_macTable[key] = entry;
 }
 
 void MacTable::addStatic(const QString& mac, int portIndex, int VlanID) {
     if (mac.isEmpty() || portIndex < 0 || VlanID < 1 || VlanID > 4094) {
-        qWarning() << "Неправильные параметры для обучения: mac=" << mac << ", portIndex=" << portIndex << ", VlanID=" << VlanID;
+        qWarning() << "РќРµРїСЂР°РІРёР»СЊРЅС‹Рµ РїР°СЂР°РјРµС‚СЂС‹ РґР»СЏ РѕР±СѓС‡РµРЅРёСЏ: mac=" << mac << ", portIndex=" << portIndex << ", VlanID=" << VlanID;
         return;
     }
     QString key = makeKey(mac, VlanID);
- //ДОБАВЛЕНИЕ В ТАБЛИЦУ ЗАПИСИ
+ //Р”РћР‘РђР’Р›Р•РќРР• Р’ РўРђР‘Р›РР¦РЈ Р—РђРџРРЎР
     MacEntry entry;
     entry.VlanID = VlanID;
     entry.macAddress = mac.trimmed().toUpper();
     entry.type = TypeEntry::Dynamic;
     entry.portIndex = portIndex;
-    entry.timestamp = QDateTime::currentDateTime(); //обнуляем таймер старения
+    entry.timestamp = QDateTime::currentDateTime(); //РѕР±РЅСѓР»СЏРµРј С‚Р°Р№РјРµСЂ СЃС‚Р°СЂРµРЅРёСЏ
     entry.isValid = true;
     m_macTable[key] = entry;
 }
 void MacTable::addBlackhole(const QString& mac, int portIndex, int VlanID) {
     if (mac.isEmpty() || portIndex < 0 || VlanID < 1 || VlanID > 4094) {
-        qWarning() << "Неправильные параметры для обучения: mac=" << mac << ", portIndex=" << portIndex << ", VlanID=" << VlanID;
+        qWarning() << "РќРµРїСЂР°РІРёР»СЊРЅС‹Рµ РїР°СЂР°РјРµС‚СЂС‹ РґР»СЏ РѕР±СѓС‡РµРЅРёСЏ: mac=" << mac << ", portIndex=" << portIndex << ", VlanID=" << VlanID;
         return;
     }
     QString key = makeKey(mac, VlanID);
- //ДОБАВЛЕНИЕ В ТАБЛИЦУ ЗАПИСИ
+ //Р”РћР‘РђР’Р›Р•РќРР• Р’ РўРђР‘Р›РР¦РЈ Р—РђРџРРЎР
     MacEntry entry;
     entry.VlanID = VlanID;
     entry.macAddress = mac.trimmed().toUpper();
     entry.type = TypeEntry::Blackhole;
     entry.portIndex = portIndex;
-    entry.timestamp = QDateTime::currentDateTime(); //обнуляем таймер старения
+    entry.timestamp = QDateTime::currentDateTime(); //РѕР±РЅСѓР»СЏРµРј С‚Р°Р№РјРµСЂ СЃС‚Р°СЂРµРЅРёСЏ
     entry.isValid = true;
     m_macTable[key] = entry;
 }
@@ -65,7 +65,7 @@ int MacTable::lookup(const QString& mac, int VlanID)  {
     QString key = makeKey(mac, VlanID);
 
     if (!m_macTable.contains(key)) {
-        return -1; //не найден
+        return -1; //РЅРµ РЅР°Р№РґРµРЅ
 	}
 	auto& entry = m_macTable[key];
 
@@ -74,18 +74,18 @@ int MacTable::lookup(const QString& mac, int VlanID)  {
     if (entry.type == TypeEntry::Dynamic) {
         qint64 ageSec = entry.timestamp.secsTo(QDateTime::currentDateTime());
         if (ageSec > m_agingTimeSec) {
-            m_macTable.remove(key); //удаляем устаревший мак
-            return -1; //не найден
+            m_macTable.remove(key); //СѓРґР°Р»СЏРµРј СѓСЃС‚Р°СЂРµРІС€РёР№ РјР°Рє
+            return -1; //РЅРµ РЅР°Р№РґРµРЅ
 		}
-		entry.timestamp = QDateTime::currentDateTime(); //обнул. таймер старения
+		entry.timestamp = QDateTime::currentDateTime(); //РѕР±РЅСѓР». С‚Р°Р№РјРµСЂ СЃС‚Р°СЂРµРЅРёСЏ
 	}
-    return entry.portIndex; //не найден
+    return entry.portIndex; //РЅРµ РЅР°Р№РґРµРЅ
 }
 
 void MacTable::cleanExpired() {
     QDateTime now = QDateTime::currentDateTime();
     QList<QString> keysToRemove;
-	// Собираем ключи устаревших динамических записей
+	// РЎРѕР±РёСЂР°РµРј РєР»СЋС‡Рё СѓСЃС‚Р°СЂРµРІС€РёС… РґРёРЅР°РјРёС‡РµСЃРєРёС… Р·Р°РїРёСЃРµР№
     for (auto it = m_macTable.begin(); it != m_macTable.end(); ++it) {
         if (it.value().type == TypeEntry::Dynamic) {
             if (it.value().timestamp.secsTo(now) > m_agingTimeSec) {
@@ -93,7 +93,7 @@ void MacTable::cleanExpired() {
             }
         }
     }
-	// Удаляем устаревшие записи
+	// РЈРґР°Р»СЏРµРј СѓСЃС‚Р°СЂРµРІС€РёРµ Р·Р°РїРёСЃРё
     for (const auto& k : keysToRemove) {
         m_macTable.remove(k);
     }

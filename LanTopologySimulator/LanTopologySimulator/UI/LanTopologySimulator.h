@@ -1,49 +1,49 @@
-#pragma once
+п»ї#pragma once
 
 #include <QtWidgets/QMainWindow>
-#include <QGraphicsScene> //Управление большим колвом 2Д объектов
-#include <QtCore> //Для вывод времени 
-#include <QGraphicsEllipseItem> //Эллипс
-#include <QGraphicsTextItem> //Для текста на холсте
-#include <QFont> //Для размера и жирности
-#include <QGraphicsSceneMouseEvent> //События мышки на сцене
+#include <QGraphicsScene> //РЈРїСЂР°РІР»РµРЅРёРµ Р±РѕР»СЊС€РёРј РєРѕР»РІРѕРј 2Р” РѕР±СЉРµРєС‚РѕРІ
+#include <QtCore> //Р”Р»СЏ РІС‹РІРѕРґ РІСЂРµРјРµРЅРё 
+#include <QGraphicsEllipseItem> //Р­Р»Р»РёРїСЃ
+#include <QGraphicsTextItem> //Р”Р»СЏ С‚РµРєСЃС‚Р° РЅР° С…РѕР»СЃС‚Рµ
+#include <QFont> //Р”Р»СЏ СЂР°Р·РјРµСЂР° Рё Р¶РёСЂРЅРѕСЃС‚Рё
+#include <QGraphicsSceneMouseEvent> //РЎРѕР±С‹С‚РёСЏ РјС‹С€РєРё РЅР° СЃС†РµРЅРµ
 #include "DevicePropertiesDialog.h"
-//#include <QComboBox> //Для выбора типа кабеля(менюшка)
+//#include <QComboBox> //Р”Р»СЏ РІС‹Р±РѕСЂР° С‚РёРїР° РєР°Р±РµР»СЏ(РјРµРЅСЋС€РєР°)
 #include "ui_LanTopologySimulator.h"
 #include "NetworkDevice.h"
 #include "NodeItem.h"
 
 class LanTopologySimulator : public QMainWindow
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    LanTopologySimulator(QWidget *parent = nullptr);
-    ~LanTopologySimulator();
+	LanTopologySimulator(QWidget* parent = nullptr);
+	~LanTopologySimulator();
 private slots:
 	void on_btnPC_clicked();
 	void on_btnServer_clicked();
 	void on_btnRouter_clicked();
 	void on_btnSwitch_clicked();
 
-	void on_actionCable_triggered(); //нажатие кнопки КАБЕЛЬ на панели
-	void on_actionDelete_triggered(); //нажатие кнопки КОРЗИНЫ на панели
-	void on_actionCursor_triggered(); //нажатие кнопки КУРСОР на панели
-	void on_actionTogglePorts_triggered(); //нажатие кнопки ПОРТЫ на панели
+	void on_actionCable_triggered(); //РЅР°Р¶Р°С‚РёРµ РєРЅРѕРїРєРё РљРђР‘Р•Р›Р¬ РЅР° РїР°РЅРµР»Рё
+	void on_actionDelete_triggered(); //РЅР°Р¶Р°С‚РёРµ РєРЅРѕРїРєРё РљРћР Р—РРќР« РЅР° РїР°РЅРµР»Рё
+	void on_actionCursor_triggered(); //РЅР°Р¶Р°С‚РёРµ РєРЅРѕРїРєРё РљРЈР РЎРћР  РЅР° РїР°РЅРµР»Рё
+	void on_actionTogglePorts_triggered(); //РЅР°Р¶Р°С‚РёРµ РєРЅРѕРїРєРё РџРћР РўР« РЅР° РїР°РЅРµР»Рё
 
 protected:
-	bool eventFilter(QObject* obj, QEvent* event) override; //Фильтр событий для мыши
-	void keyPressEvent(QKeyEvent* event) override; //Обработка нажатий клавиш
+	bool eventFilter(QObject* obj, QEvent* event) override; //Р¤РёР»СЊС‚СЂ СЃРѕР±С‹С‚РёР№ РґР»СЏ РјС‹С€Рё
+	void keyPressEvent(QKeyEvent* event) override; //РћР±СЂР°Р±РѕС‚РєР° РЅР°Р¶Р°С‚РёР№ РєР»Р°РІРёС€
 
 
 private:
-    Ui::LanTopologySimulatorClass ui;
-	QGraphicsScene* m_scene; //Сцена для отображения объектов
-	NodeItem* m_firstCableNode; //Узел, с которого тянем кабель
+	Ui::LanTopologySimulatorClass ui;
+	QGraphicsScene* m_scene; //РЎС†РµРЅР° РґР»СЏ РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ РѕР±СЉРµРєС‚РѕРІ
+	NodeItem* m_firstCableNode = nullptr; //РЈР·РµР», СЃ РєРѕС‚РѕСЂРѕРіРѕ С‚СЏРЅРµРј РєР°Р±РµР»СЊ
 
-	void resetCableState(); //Сброс состояния кабеля
+	void resetCableState(); //РЎР±СЂРѕСЃ СЃРѕСЃС‚РѕСЏРЅРёСЏ РєР°Р±РµР»СЏ
 	void logDeviceCreated(const NetworkDevice* device);
-	void handleCableConnection(NodeItem* clickedNode); // Логика 1клик и 2клик
-	void deleteSelectedItems(); //Удаление выделенных объектов
+	void handleCableConnection(NodeItem* clickedNode); // Р›РѕРіРёРєР° 1РєР»РёРє Рё 2РєР»РёРє
+	void deleteSelectedItems(); //РЈРґР°Р»РµРЅРёРµ РІС‹РґРµР»РµРЅРЅС‹С… РѕР±СЉРµРєС‚РѕРІ
 };
 

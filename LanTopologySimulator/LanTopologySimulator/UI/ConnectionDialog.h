@@ -10,9 +10,9 @@ public:
 	~ConnectionDialog() override = default;
 
 
-	CableType getSelectedCableType() const;
-	QString getSelectedPort1() const;
-	QString getSelectedPort2() const;
+	CableType getSelectedCableType() const { return static_cast<CableType>(m_cableTypeCombo->currentData().toInt());	};
+	QString getSelectedPort1() const { return m_port1Combo->currentText(); };
+	QString getSelectedPort2() const { return m_port2Combo->currentText(); };
 private:
 	void setupUI(NetworkDevice* dev1, NetworkDevice* dev2);
 

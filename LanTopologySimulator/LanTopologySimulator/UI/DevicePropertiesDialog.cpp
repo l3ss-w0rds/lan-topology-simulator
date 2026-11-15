@@ -1,92 +1,186 @@
 ﻿#include "DevicePropertiesDialog.h"
 #include "ui_DevicePropertiesDialog.h"
+#include <QHeaderView>
+#include <QMessageBox>
+#include <QVBoxLayout>
 
-DevicePropertiesDialog::DevicePropertiesDialog (NetworkDevice* device,QWidget *parent)
-	: QDialog(parent), 
-	ui(new Ui::DevicePropertiesDialog),
+// Конструктор диалога свойств сетевого устройства
+DevicePropertiesDialog::DevicePropertiesDialog(NetworkDevice* device, QWidget* parent)
+    : QDialog(parent),
+    ui(new Ui::DevicePropertiesDialog),
     m_device(device)
 {
-	ui->setupUi(this);
-   	if (m_device) {
-		setWindowTitle(QString("Свойства устройства: %1").arg(m_device->getName()));
-		loadData();
-		loadPortsTable();
-	}
-    // Встраиваем терминал во вторую вкладку (индекс 1)
-    if (ui->tabWidget->count() > 1) {
-        QWidget* cliTab = ui->tabWidget->widget(1);
-        QVBoxLayout* cliLayout = new QVBoxLayout(cliTab);
-        cliLayout->setContentsMargins(0, 0, 0, 0); // Без лишних рамок
-        cliLayout->addWidget(new TerminalWidget(m_device, cliTab));
-    }
-	connect(ui->cancelButton, &QPushButton::clicked, this, &QDialog::reject);
+    ui->setupUi(this);
+    ui->configurationHint->setWordWrap(true);
+    ui->footerHint->setWordWrap(true);
+    ui->adminUpCheck->setText(QStringLiteral("Включён административно"));
+    ui->ipEdit->setPlaceholderText("192.168.1.10");
+    ui->maskEdit->setPlaceholderText("255.255.255.0");
+    ui->gatewayEdit->setPlaceholderText(QStringLiteral("Пусто — шлюз не задан"));
+    ui->okButton->setDefault(true);
+    ui->macLabel->setTextInteractionFlags(Qt::TextSelectableByMouse); // Разрешаем выделение MAC-адреса мышью
 
-	connect(ui->okButton, &QPushButton::clicked, this, [this]() {
-		if (m_device) {
-			// Сохраняем введенные пользователем имя и IP обратно в модель
-			m_device->setName(ui->nameEdit->text().trimmed());
-			m_device->setIP(ui->ipEdit->text().trimmed());
-		}
-		accept(); // Закрываем окно с сохранением
-		});
+    //Подключение базовых кнопок управления диалогом
+    connect(ui->cancelButton, &QPushButton::clicked, this, &QDialog::reject);
+    connect(ui->okButton, &QPushButton::clicked, this, &DevicePropertiesDialog::saveConfiguration);
+
+    //Проверка валидности указателя на устройство
+    if (!m_device) {
+        ui->okButton->setEnabled(false); // Блокируем сохранение, если устройство не передано
+        return;
+    }
+
+    setWindowTitle(QStringLiteral("Свойства: %1").arg(m_device->getName()));
+
+    //Инициализация "черновика" (draft) конфигурации портов. Делаем окпии поротов, чтобы изменения не применились мгновенно
+    // а вступали в силу только после нажатия кнопки "ОК".
+    m_draft = m_device->getPorts();
+
+    ui->nameEdit->setText(m_device->getName());
+
+    // Заполняем выпадающие списки именами портов
+    for (int i = 0; i < m_draft.size(); ++i) {
+        ui->interfaceCombo->addItem(m_draft[i].name, i);
+        ui->gatewayInterfaceCombo->addItem(m_draft[i].name, i);
+    }
+
+    //Загрузка настроек шлюза по умолчанию
+    ui->gatewayEdit->setText(m_device->getDefaultGateway());
+    const int gatewayIndex = ui->gatewayInterfaceCombo->findData(m_device->getGatewayPortIndex());
+    ui->gatewayInterfaceCombo->setCurrentIndex(gatewayIndex < 0 ? 0 : gatewayIndex);
+
+    //Настройка сигналов и слотов для синхронизации UI и черновика (m_draft)
+
+    // При смене интерфейса в комбобоксе: сохраняем изменения предыдущего, 
+    // загружаем данные нового и обновляем общую таблицу портов.
+    connect(ui->interfaceCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+        this, [this](int index) {
+            storeSelectedInterface();
+            loadSelectedInterface(index);
+            loadPortsTable();
+        });
+
+    // При завершении ввода IP/маски сохраняем данные в черновик и обновляем таблицу
+    connect(ui->ipEdit, &QLineEdit::editingFinished, this, [this]() {
+        storeSelectedInterface();
+        loadPortsTable();
+        });
+
+    connect(ui->maskEdit, &QLineEdit::editingFinished, this, [this]() {
+        storeSelectedInterface();
+        loadPortsTable();
+        });
+
+    // Инициализация полей данными первого порта
+    loadSelectedInterface(0);
+
+    //Разделение логики для L2 (коммутатор) и L3 (маршрутизатор/хост) устройств
+    const bool l3 = m_device->getType() != DeviceType::Switch;
+    ui->interfaceGroup->setVisible(l3);
+    ui->gatewayGroup->setVisible(l3);
+
+    if (!l3) {
+        ui->configurationHint->setText(QStringLiteral(
+            "L2-коммутатор пересылает Ethernet-кадры. IP управления и шлюз пока не реализованы."));
+    }
+
+    // Первичное заполнение таблицы портов
+    loadPortsTable();
+
+    //Динамическое добавление виджета терминала на соответствующую вкладку
+    auto* layout = new QVBoxLayout(ui->terminalTab);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->addWidget(new TerminalWidget(m_device, ui->terminalTab));
 }
 
 DevicePropertiesDialog::~DevicePropertiesDialog() {
-	delete ui;
+    delete ui;
 }
 
-void DevicePropertiesDialog::loadData() {
-	if (!m_device) return;
+void DevicePropertiesDialog::storeSelectedInterface()
+{
+    if (m_selectedPort < 0 || m_selectedPort >= m_draft.size()) return;
 
-	ui->nameEdit->setText(m_device->getName());
-	ui->ipEdit->setText(m_device->getIP());
-	ui->macLabel->setText(QString("<b style='font-family: Consolas; color: #2563EB;'>%1</b>")
-		.arg(m_device->getMac()));
-
-    ui->macLabel->setStyleSheet(
-        "QLabel {"
-        "   background-color: #F1F5F9;"
-        "   border: 1px solid #CBD5E1;"
-        "   border-radius: 6px;"
-        "   padding: 5px 10px;"
-        "   font-family: 'Consolas', monospace;"
-        "   font-weight: bold;"
-        "   color: #2563EB;"
-        "}"
-    );
+    auto& port = m_draft[m_selectedPort];
+    port.ipv4 = ui->ipEdit->text().trimmed();
+    port.subnetMask = ui->maskEdit->text().trimmed();
+    port.adminUp = ui->adminUpCheck->isChecked();
 }
 
 void DevicePropertiesDialog::loadPortsTable() {
-	if (!m_device) return;
-	//Настраиваем 3 колонки таблицы портов
-	ui->portsTable->setColumnCount(3);
-	ui->portsTable->setHorizontalHeaderLabels({ "Интерфейс", "Линк", "Подключение" });
-	ui->portsTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
-	ui->portsTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-	ui->portsTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
-	ui->portsTable->verticalHeader()->setVisible(false);
-	ui->portsTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-	ui->portsTable->verticalHeader()->setDefaultSectionSize(32); 
+    ui->portsTable->setColumnCount(4);
+    ui->portsTable->setHorizontalHeaderLabels({
+        QStringLiteral("Порт"),
+        "IPv4 / маска",
+        QStringLiteral("Кабель"),
+        QStringLiteral("Подключение")
+        });
 
-	//Забираем порты из модели устройства
-	const auto& ports = m_device->getPorts();
-	ui->portsTable->setRowCount(static_cast<int>(ports.size()));
+    ui->portsTable->setRowCount(m_draft.size());
+    ui->portsTable->setEditTriggers(QAbstractItemView::NoEditTriggers); // Запрет прямого редактирования таблицы
+    ui->portsTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->portsTable->verticalHeader()->hide();
 
-	for (int i = 0; i < ports.size(); ++i) {
-		const auto& p = ports[i];
+    // Настройка авторазмера колонок: последняя колонка растягивается на всё оставшееся место
+    ui->portsTable->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    ui->portsTable->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Stretch);
 
-		// Колонка 0: Имя порта (eth0, Fa0/1 и т.д.)
-		ui->portsTable->setItem(i, 0, new QTableWidgetItem(p.name));
+    // Заполнение строк таблицы данными о портах
+    for (int i = 0; i < m_draft.size(); ++i) {
+        const auto& port = m_draft[i];
 
-		// Колонка 1: Статус линка
-		QString statusText = p.isOccupied ? "🟢 UP" : "⚪ DOWN";
-		ui->portsTable->setItem(i, 1, new QTableWidgetItem(statusText));
+        // Формируем строку с информацией о подключенном устройстве (если есть)
+        QString peer = QStringLiteral("—");
+        if (port.isOccupied && port.connectedDevice)
+            peer = port.connectedDevice->getName() + " [" + port.connectedPortName + "]";
 
-		// Колонка 2: Куда подключен кабель
-		QString connText = "Свободен";
-		if (p.isOccupied && p.connectedDevice) {
-			connText = QString("%1 [%2]").arg(p.connectedDevice->getName(), p.connectedPortName);
-		}
-		ui->portsTable->setItem(i, 2, new QTableWidgetItem(connText));
-	}
+        // Формируем массив значений для текущей строки
+        const QStringList values = {
+            port.name,
+            port.ipv4.isEmpty() ? QStringLiteral("—") : port.ipv4 + " / " + port.subnetMask,
+            port.isOccupied ? QStringLiteral("Подключён") : QStringLiteral("Нет"),
+            peer
+        };
+
+        // Создание и добавление ячеек в таблицу
+        for (int col = 0; col < values.size(); ++col)
+            ui->portsTable->setItem(i, col, new QTableWidgetItem(values[col]));
+    }
+}
+
+void DevicePropertiesDialog::loadSelectedInterface(int index)
+{
+    if (index < 0 || index >= m_draft.size()) return;
+
+    m_selectedPort = index;
+    const auto& port = m_draft[index];
+
+    ui->ipEdit->setText(port.ipv4);
+    ui->maskEdit->setText(port.subnetMask);
+    ui->macLabel->setText(port.mac);
+    ui->adminUpCheck->setChecked(port.adminUp);
+}
+
+// Сначала сохраняет текущий выбранный интерфейс в черновик,
+// затем вызывает метод applyConfiguration. В случае ошибки выводит предупреждение.
+void DevicePropertiesDialog::saveConfiguration()
+{
+    if (!m_device) return;
+
+    // Финальное сохранение данных последнего редактируемого порта в черновик
+    storeSelectedInterface();
+
+    QString error;
+    // Попытка применить конфигурацию к устройству
+    if (!m_device->applyConfiguration(ui->nameEdit->text(), m_draft,
+        ui->gatewayEdit->text(), ui->gatewayInterfaceCombo->currentData().toInt(), error)) {
+
+        // Обработка ошибки: выводим текст в статусную строку и показываем MessageBox
+        ui->saveStatus->setText(error);
+        QMessageBox::warning(this, QStringLiteral("Конфигурация не сохранена"), error);
+        return;
+    }
+
+    // Если всё успешно, закрываем диалог с кодом_ACCEPTED_
+    accept();
 }

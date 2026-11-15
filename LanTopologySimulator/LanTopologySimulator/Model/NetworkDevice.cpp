@@ -3,8 +3,6 @@
 
 NetworkDevice::NetworkDevice(const QString& name, const QString& ip, DeviceType type)
 	: m_name(name), 
-	m_ip(ip), 
-	m_mac(generateRandomMac()), 
 	m_type(type), 
 	m_isOnline(true)
 {
@@ -14,6 +12,19 @@ NetworkDevice::NetworkDevice(const QString& name, const QString& ip, DeviceType 
 	}
 	else {//Для ПК, Сервера и Роутера, создаем Arp-таблица
 		m_arpTable = new ArpTable(120); 
+	}
+	for (auto& port : m_ports) {
+		if (m_type != DeviceType::Switch)
+			port.mac = generateRandomMac();
+	}
+
+	if (m_type != DeviceType::Switch && !ip.trimmed().isEmpty()) {
+		QString error;
+
+		if (!configureInterface(0, ip, "255.255.255.0", error)) {
+			qWarning() << "Invalid initial interface configuration:"
+				<< error;
+		}
 	}
 }
 NetworkDevice::~NetworkDevice() { 
@@ -30,8 +41,7 @@ QString NetworkDevice::generateRandomMac() {
 	for (int i = 0; i < 6; ++i) {
 		mac[i] = static_cast<uint8_t>(dis(gen));
 	}
-	mac[0] &= 0xFC; // Устанавливаем первый бит в 0 (1байт четный), а второй не 2,6,10....
-	//mac[0] |= 0x02; // Устанавливаем второй бит в 1
+	mac[0] = (mac[0] & 0xFC) | 0x02; // Устанавливаем первый бит в 0 (1байт четный), а второй не 2,6,10.... Устанавливаем второй бит в 1
 
 
 	QString macStr = QString("%1:%2:%3:%4:%5:%6")
@@ -150,7 +160,7 @@ bool NetworkDevice::ping(const QString& targetIp, QStringList& outLog)
 	outLog.clear();
 
 	//Проверка пинга самого себя (Loopback)
-	if (cleanTarget == m_ip) {
+	if (cleanTarget == getIP()) {
 		outLog << QStringLiteral("Обмен пакетами с ") + cleanTarget + QStringLiteral(" по 32 байт:");
 		for (int i = 0; i < 4; ++i) {
 			outLog << QStringLiteral("Ответ от ") + cleanTarget + QStringLiteral(": число байт=32 время<1мс TTL=128");
@@ -263,5 +273,313 @@ bool NetworkDevice::ping(const QString& targetIp, QStringList& outLog)
 		outLog << QStringLiteral("    Пакетов: отправлено = 4, получено = 4, потеряно = 0 (0% потерь)");
 	}
 
+	return true;
+}
+
+
+bool NetworkDevice::configureInterface(	int portIndex,	const QString& ip,	const QString& mask,QString& error)
+{
+	error.clear();
+
+	if (m_type == DeviceType::Switch) {
+		error = QStringLiteral(
+			"У L2-коммутатора нет маршрутизируемых интерфейсов.");
+		return false;
+	}
+
+	if (portIndex < 0 || portIndex >= m_ports.size()) {
+		error = QStringLiteral("Неверный индекс интерфейса.");
+		return false;
+	}
+
+	quint32 address = 0;
+	quint32 subnetMask = 0;
+	int prefixLength = 0;
+
+	if (!Ipv4Utils::parse(ip, address)) {
+		error = QStringLiteral("Некорректный IPv4-адрес.");
+		return false;
+	}
+
+	if (!Ipv4Utils::parseMask(mask, subnetMask, prefixLength)) {
+		error = QStringLiteral(
+			"Некорректная маска. Поддерживаются /1 ... /30.");
+		return false;
+	}
+
+	if (!Ipv4Utils::isUsableHost(address, subnetMask)) {
+		error = QStringLiteral(
+			"Этот адрес нельзя назначить интерфейсу.");
+		return false;
+	}
+
+	for (int i = 0; i < m_ports.size(); ++i) {
+		if (i == portIndex)
+			continue;
+
+		quint32 otherAddress = 0;
+
+		if (Ipv4Utils::parse(m_ports[i].ipv4, otherAddress) &&
+			otherAddress == address) {
+			error = QStringLiteral(
+				"Этот IP уже назначен другому интерфейсу устройства.");
+			return false;
+		}
+	}
+
+	// Не позволяем изменением IP сделать существующий шлюз
+	// недопустимым для его интерфейса.
+	if (!m_defaultGateway.isEmpty()) {
+		quint32 gateway = 0;
+
+		if (!Ipv4Utils::parse(m_defaultGateway, gateway)) {
+			error = QStringLiteral("Некорректная конфигурация шлюза.");
+			return false;
+		}
+
+		if (gateway == address) {
+			error = QStringLiteral(
+				"IP интерфейса не должен совпадать со шлюзом.");
+			return false;
+		}
+
+		if (m_gatewayPortIndex == portIndex) {
+			if ((address & subnetMask) != (gateway & subnetMask) ||
+				!Ipv4Utils::isUsableHost(gateway, subnetMask)) {
+				error = QStringLiteral(
+					"Сначала удалите или измените шлюз: "
+					"он не подходит для новой подсети.");
+				return false;
+			}
+		}
+	}
+
+	// Меняем данные только после всех проверок.
+	NetworkPort& port = m_ports[portIndex];
+	port.ipv4 = Ipv4Utils::toString(address);
+	port.subnetMask = Ipv4Utils::toString(subnetMask);
+
+	return true;
+}
+
+
+bool NetworkDevice::configureDefaultGateway( const QString& gateway, int portIndex,	QString& error)
+{
+	error.clear();
+
+	// Пустая строка означает удалить default gateway.
+	if (gateway.trimmed().isEmpty()) {
+		m_defaultGateway.clear();
+		m_gatewayPortIndex = -1;
+		return true;
+	}
+
+	if (m_type == DeviceType::Switch) {
+		error = QStringLiteral(
+			"Шлюз для L2-коммутатора пока не поддерживается.");
+		return false;
+	}
+
+	if (portIndex < 0 || portIndex >= m_ports.size()) {
+		error = QStringLiteral("Выберите интерфейс шлюза.");
+		return false;
+	}
+
+	const NetworkPort& port = m_ports[portIndex];
+
+	quint32 address = 0;
+	quint32 mask = 0;
+	quint32 gatewayAddress = 0;
+	int prefixLength = 0;
+
+	if (!Ipv4Utils::parse(port.ipv4, address) ||
+		!Ipv4Utils::parseMask(port.subnetMask, mask, prefixLength)) {
+		error = QStringLiteral(
+			"Сначала настройте IP и маску интерфейса.");
+		return false;
+	}
+
+	if (!Ipv4Utils::parse(gateway, gatewayAddress) ||
+		!Ipv4Utils::isUsableHost(gatewayAddress, mask)) {
+		error = QStringLiteral("Некорректный адрес шлюза.");
+		return false;
+	}
+
+	if ((address & mask) != (gatewayAddress & mask)) {
+		error = QStringLiteral(
+			"Шлюз должен находиться в подсети выбранного интерфейса.");
+		return false;
+	}
+
+	for (const auto& candidate : m_ports) {
+		quint32 ownAddress = 0;
+
+		if (Ipv4Utils::parse(candidate.ipv4, ownAddress) &&
+			ownAddress == gatewayAddress) {
+			error = QStringLiteral(
+				"Шлюз не должен совпадать с собственным IP устройства.");
+			return false;
+		}
+	}
+
+	m_defaultGateway = Ipv4Utils::toString(gatewayAddress);
+	m_gatewayPortIndex = portIndex;
+
+	return true;
+}
+
+
+RouteDecision NetworkDevice::selectRoute(const QString& destinationIp) const
+{
+	RouteDecision result;
+
+	if (!m_isOnline) {
+		result.error = QStringLiteral("Устройство выключено.");
+		return result;
+	}
+
+	if (m_type == DeviceType::Switch) {
+		result.error = QStringLiteral(
+			"Исходящие IP-пакеты для L2-коммутатора пока не поддерживаются.");
+		return result;
+	}
+
+	quint32 destination = 0;
+
+	if (!Ipv4Utils::parse(destinationIp, destination)) {
+		result.error = QStringLiteral("Некорректный IPv4 назначения.");
+		return result;
+	}
+
+	const quint32 firstOctet = destination >> 24;
+
+	// На этом этапе поддерживаем обычную unicast-доставку.
+	if (firstOctet == 0 ||
+		firstOctet == 127 ||
+		firstOctet >= 224) {
+		result.error = QStringLiteral(
+			"Этот диапазон адресов пока не поддерживается.");
+		return result;
+	}
+
+	// 1. Локальная доставка.
+	for (int i = 0; i < m_ports.size(); ++i) {
+		const auto& port = m_ports[i];
+
+		if (!port.adminUp)
+			continue;
+
+		quint32 ownAddress = 0;
+
+		if (Ipv4Utils::parse(port.ipv4, ownAddress) &&
+			ownAddress == destination) {
+			result.type = RouteDecisionType::Local;
+			result.portIndex = i;
+			return result;
+		}
+	}
+
+	// 2. Ищем наиболее специфичную подключённую сеть.
+	int bestPort = -1;
+	int bestPrefix = -1;
+	quint32 bestMask = 0;
+
+	for (int i = 0; i < m_ports.size(); ++i) {
+		const auto& port = m_ports[i];
+
+		if (!port.adminUp)
+			continue;
+
+		quint32 address = 0;
+		quint32 mask = 0;
+		int prefixLength = 0;
+
+		if (!Ipv4Utils::parse(port.ipv4, address) ||
+			!Ipv4Utils::parseMask(
+				port.subnetMask, mask, prefixLength)) {
+			continue;
+		}
+
+		if ((address & mask) == (destination & mask) &&
+			prefixLength > bestPrefix) {
+			bestPort = i;
+			bestPrefix = prefixLength;
+			bestMask = mask;
+		}
+	}
+
+	if (bestPort >= 0) {
+		if (!Ipv4Utils::isUsableHost(destination, bestMask)) {
+			result.error = QStringLiteral(
+				"Доставка на адрес сети или broadcast пока не поддерживается.");
+			return result;
+		}
+
+		result.type = RouteDecisionType::Direct;
+		result.portIndex = bestPort;
+		result.nextHopIp = Ipv4Utils::toString(destination);
+		return result;
+	}
+
+	// 3. Подключённого маршрута нет — используем default gateway.
+	if (!m_defaultGateway.isEmpty() &&
+		m_gatewayPortIndex >= 0 &&
+		m_gatewayPortIndex < m_ports.size()) {
+
+		const auto& port = m_ports[m_gatewayPortIndex];
+
+		if (port.adminUp) {
+			result.type = RouteDecisionType::ViaGateway;
+			result.portIndex = m_gatewayPortIndex;
+			result.nextHopIp = m_defaultGateway;
+			return result;
+		}
+	}
+
+	result.error = QStringLiteral("Нет маршрута до адреса назначения.");
+	return result;
+}
+
+bool NetworkDevice::applyConfiguration(const QString& name,	const QVector<NetworkPort>& interfaces, const QString& gateway,	int gatewayPort, QString& error)
+{
+	error.clear();
+	if (name.trimmed().isEmpty()) {
+		error = QStringLiteral("Введите имя устройства.");
+		return false;
+	}
+	if (interfaces.size() != m_ports.size()) {
+		error = QStringLiteral("Неверное число интерфейсов.");
+		return false;
+	}
+	// Validate the whole draft before changing any live state.
+	NetworkDevice candidate(name.trimmed(), QString(), m_type);
+	for (int i = 0; i < interfaces.size(); ++i) {
+		const auto& input = interfaces[i];
+		if (m_type == DeviceType::Switch)
+			continue;
+		if (input.ipv4.trimmed().isEmpty() &&
+			input.subnetMask.trimmed().isEmpty()) {
+			candidate.m_ports[i].adminUp = input.adminUp;
+			continue;
+		}
+		if (!candidate.configureInterface(i, input.ipv4, input.subnetMask, error)) {
+			error = interfaces[i].name + ": " + error;
+			return false;
+		}
+		candidate.m_ports[i].adminUp = input.adminUp;
+	}
+	if (!candidate.configureDefaultGateway(gateway, gatewayPort, error))
+		return false;
+
+	m_name = name.trimmed();
+	for (int i = 0; i < m_ports.size(); ++i) {
+		// Do not replace MACs, connections or port identity from the draft.
+		m_ports[i].ipv4 = candidate.m_ports[i].ipv4;
+		m_ports[i].subnetMask = candidate.m_ports[i].subnetMask;
+		m_ports[i].adminUp = interfaces[i].adminUp;
+	}
+	m_defaultGateway = candidate.m_defaultGateway;
+	m_gatewayPortIndex = candidate.m_gatewayPortIndex;
+	if (m_arpTable) m_arpTable->clear();
 	return true;
 }

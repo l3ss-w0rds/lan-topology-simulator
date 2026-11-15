@@ -1,4 +1,4 @@
-#include "LanTopologySimulator.h"
+п»ї#include "LanTopologySimulator.h"
 #include <QtWidgets/QApplication>
 #include <QFile>
 #include <QMessageBox>
@@ -7,10 +7,10 @@ int main(int argc, char* argv[])
 {
     QApplication app(argc, argv);
 
-    // 1. Проверяем правильный путь с префиксом проекта:
+    // 1. РџСЂРѕРІРµСЂСЏРµРј РїСЂР°РІРёР»СЊРЅС‹Р№ РїСѓС‚СЊ СЃ РїСЂРµС„РёРєСЃРѕРј РїСЂРѕРµРєС‚Р°:
     QFile styleFile(":/LanTopologySimulator/style.qss");
 
-    // Если вдруг префикс другой — пробуем запасные пути:
+    // Р•СЃР»Рё РІРґСЂСѓРі РїСЂРµС„РёРєСЃ РґСЂСѓРіРѕР№ вЂ” РїСЂРѕР±СѓРµРј Р·Р°РїР°СЃРЅС‹Рµ РїСѓС‚Рё:
     if (!styleFile.exists()) {
         styleFile.setFileName(":/style.qss");
     }
@@ -18,15 +18,15 @@ int main(int argc, char* argv[])
         styleFile.setFileName("style.qss");
     }
 
-    // 2. Открываем и применяем
+    // 2. РћС‚РєСЂС‹РІР°РµРј Рё РїСЂРёРјРµРЅСЏРµРј
     if (styleFile.open(QFile::ReadOnly | QFile::Text)) {
         app.setStyleSheet(styleFile.readAll());
         styleFile.close();
     }
     else {
-        // Если файл ВСЁ РАВНО не найден — программа честно покажет всплывающее окно!
-        QMessageBox::critical(nullptr, "Ошибка QSS",
-            "Файл style.qss не найден в ресурсах!\nПроверьте путь в .qrc");
+        // Р•СЃР»Рё С„Р°Р№Р» Р’РЎРЃ Р РђР’РќРћ РЅРµ РЅР°Р№РґРµРЅ вЂ” РїСЂРѕРіСЂР°РјРјР° С‡РµСЃС‚РЅРѕ РїРѕРєР°Р¶РµС‚ РІСЃРїР»С‹РІР°СЋС‰РµРµ РѕРєРЅРѕ!
+        QMessageBox::critical(nullptr, "РћС€РёР±РєР° QSS",
+            "Р¤Р°Р№Р» style.qss РЅРµ РЅР°Р№РґРµРЅ РІ СЂРµСЃСѓСЂСЃР°С…!\nРџСЂРѕРІРµСЂСЊС‚Рµ РїСѓС‚СЊ РІ .qrc");
     }
 
     LanTopologySimulator window;

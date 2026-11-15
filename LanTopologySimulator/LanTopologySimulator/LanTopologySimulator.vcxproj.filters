@@ -87,6 +87,9 @@
     <ClInclude Include="Model\ArpTable.h">
       <Filter>Model</Filter>
     </ClInclude>
+    <ClInclude Include="Model\Ipv4Utils.h">
+      <Filter>Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="UI\LanTopologySimulator.h">

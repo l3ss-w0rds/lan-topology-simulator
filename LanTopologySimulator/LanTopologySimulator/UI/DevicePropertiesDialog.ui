@@ -6,123 +6,185 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>570</width>
-    <height>520</height>
+    <width>820</width>
+    <height>760</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>Dialog</string>
+  <property name="minimumSize">
+   <size>
+    <width>720</width>
+    <height>680</height>
+   </size>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <property name="windowTitle">
+   <string>Свойства устройства</string>
+  </property>
+  <layout class="QVBoxLayout" name="rootLayout">
+   <item>
+    <widget class="QLabel" name="dialogHeading">
+     <property name="text">
+      <string>Сетевая конфигурация</string>
+     </property>
+    </widget>
+   </item>
    <item>
     <widget class="QTabWidget" name="tabWidget">
-     <property name="currentIndex">
-      <number>0</number>
-     </property>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="configTab">
       <attribute name="title">
-       <string>⚙️ Конфигурация</string>
+       <string>Конфигурация</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="configLayout">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QLabel" name="label">
+        <layout class="QFormLayout" name="nameLayout">
+         <item row="0" column="0">
+          <widget class="QLabel" name="fieldLabel0">
            <property name="text">
-            <string>Имя устройства:</string>
+            <string>Имя устройства</string>
            </property>
           </widget>
          </item>
-         <item>
+         <item row="0" column="1">
           <widget class="QLineEdit" name="nameEdit"/>
          </item>
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <item>
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>MAC-адрес:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="macLabel">
-           <property name="text">
-            <string>00:00:00:00:00:00</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        <widget class="QLabel" name="configurationHint">
+         <property name="text">
+          <string>Изменения применяются вместе по кнопке «Сохранить». Пустые IP и маска удаляют адрес интерфейса.</string>
+         </property>
+        </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
-         <item>
-          <widget class="QLabel" name="label_3">
-           <property name="text">
-            <string>IP-адресс:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="ipEdit"/>
-         </item>
-        </layout>
+        <widget class="QGroupBox" name="interfaceGroup">
+         <property name="title">
+          <string>Адресация интерфейса</string>
+         </property>
+         <layout class="QFormLayout" name="interfaceGroupLayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="fieldLabel0">
+            <property name="text">
+             <string>Интерфейс</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="interfaceCombo"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="fieldLabel1">
+            <property name="text">
+             <string>MAC-адрес</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="macLabel"/>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="fieldLabel2">
+            <property name="text">
+             <string>IPv4-адрес</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="ipEdit"/>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="fieldLabel3">
+            <property name="text">
+             <string>Маска подсети</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLineEdit" name="maskEdit"/>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="fieldLabel4">
+            <property name="text">
+             <string>Состояние</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QCheckBox" name="adminUpCheck"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="gatewayGroup">
+         <property name="title">
+          <string>Шлюз по умолчанию · необязательно</string>
+         </property>
+         <layout class="QFormLayout" name="gatewayGroupLayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="fieldLabel0">
+            <property name="text">
+             <string>Адрес шлюза</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="gatewayEdit"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="fieldLabel1">
+            <property name="text">
+             <string>Выходной интерфейс</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="gatewayInterfaceCombo"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="portsHeading">
+         <property name="text">
+          <string>Интерфейсы и подключения</string>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QTableWidget" name="portsTable"/>
        </item>
+       <item>
+        <widget class="QLabel" name="saveStatus"/>
+       </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_2">
+     <widget class="QWidget" name="terminalTab">
       <attribute name="title">
-       <string>💻 Консоль</string>
+       <string>Терминал</string>
       </attribute>
      </widget>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="buttonBox">
-     <property name="spacing">
-      <number>6</number>
-     </property>
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
-      <number>0</number>
-     </property>
+    <layout class="QHBoxLayout" name="buttonsLayout">
      <item>
-      <spacer>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>131</width>
-         <height>31</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="okButton">
+      <widget class="QLabel" name="footerHint">
        <property name="text">
-        <string>OK</string>
+        <string>ARP/ICMP: старый ping ещё не заменён сетевым движком.</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="cancelButton">
        <property name="text">
-        <string>Cancel</string>
+        <string>Отмена</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="okButton">
+       <property name="text">
+        <string>Сохранить</string>
        </property>
       </widget>
      </item>
@@ -131,38 +193,5 @@
   </layout>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>okButton</sender>
-   <signal>clicked()</signal>
-   <receiver>DevicePropertiesDialog</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>278</x>
-     <y>253</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>96</x>
-     <y>254</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>cancelButton</sender>
-   <signal>clicked()</signal>
-   <receiver>DevicePropertiesDialog</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>369</x>
-     <y>253</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>179</x>
-     <y>282</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

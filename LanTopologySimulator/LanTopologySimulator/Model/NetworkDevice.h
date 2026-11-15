@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include <QString>
 #include <random>
 #include <QDebug>
@@ -9,6 +9,7 @@
 #include <QMap>
 #include "MacTable.h"
 #include "ArpTable.h"
+#include "Ipv4Utils.h"
 
 enum class DeviceType {
 	PC,
@@ -17,10 +18,29 @@ enum class DeviceType {
 	Router
 };
 struct NetworkPort {
-	QString name; //имя интерфейса
-	bool isOccupied = false; // занят или свободен
-	class NetworkDevice* connectedDevice = nullptr; //к кому подключен
-	QString connectedPortName = ""; //имя порта соседа
+	QString name; //РёРјСЏ РёРЅС‚РµСЂС„РµР№СЃР°
+	bool isOccupied = false; // Р·Р°РЅСЏС‚ РёР»Рё СЃРІРѕР±РѕРґРµРЅ
+	class NetworkDevice* connectedDevice = nullptr; //Рє РєРѕРјСѓ РїРѕРґРєР»СЋС‡РµРЅ
+	QString connectedPortName = ""; //РёРјСЏ РїРѕСЂС‚Р° СЃРѕСЃРµРґР°
+	QString mac;
+	QString ipv4;
+	QString subnetMask;
+	bool adminUp = true;
+};
+
+enum class RouteDecisionType {
+	Local,
+	Direct,
+	ViaGateway,
+	NoRoute
+};
+
+struct RouteDecision {
+	RouteDecisionType type = RouteDecisionType::NoRoute;
+
+	int portIndex = -1;
+	QString nextHopIp;
+	QString error;
 };
 
 class NetworkDevice {
@@ -28,48 +48,54 @@ public:
 	NetworkDevice(const QString& name, const QString& ip, DeviceType type);
 	virtual ~NetworkDevice();
 
-	//Геттеры читают свойства объекта
-	QString getName() const {return m_name; }
-	QString getIP() const { return m_ip; }
-	QString getMac() const { return m_mac; }
+	//Р“РµС‚С‚РµСЂС‹ С‡РёС‚Р°СЋС‚ СЃРІРѕР№СЃС‚РІР° РѕР±СЉРµРєС‚Р°
+	QString getName() const { return m_name; }
+	QString getIP() const { return m_ports.isEmpty() ? QString() : m_ports.first().ipv4; };
+	QString getMac() const { return m_ports.isEmpty() ? QString() : m_ports.first().mac; };
 	DeviceType getType() const { return m_type; }
 	bool getOnline() const { return m_isOnline; }
 	QString getTerminalHistory() const { return m_terminalHistory; }
 	const QVector<NetworkPort>& getPorts() const { return m_ports; }
 	MacTable* getMacTable() const { return m_macTable; }
 	ArpTable* getArpTable() const { return m_arpTable; }
-	int getPortIndexConnectedTo(NetworkDevice* targetDevice) const; // Возвращает индекс порта, через который мы подключены к целевому устройству. -1 если не подключены напрямую
-	
+	int getPortIndexConnectedTo(NetworkDevice* targetDevice) const; // Р’РѕР·РІСЂР°С‰Р°РµС‚ РёРЅРґРµРєСЃ РїРѕСЂС‚Р°, С‡РµСЂРµР· РєРѕС‚РѕСЂС‹Р№ РјС‹ РїРѕРґРєР»СЋС‡РµРЅС‹ Рє С†РµР»РµРІРѕРјСѓ СѓСЃС‚СЂРѕР№СЃС‚РІСѓ. -1 РµСЃР»Рё РЅРµ РїРѕРґРєР»СЋС‡РµРЅС‹ РЅР°РїСЂСЏРјСѓСЋ
+	QString getDefaultGateway() const { return m_defaultGateway; }
+	int getGatewayPortIndex() const { return m_gatewayPortIndex; }
 
-	QVector<NetworkPort> getFreePorts() const; //Возврощает список свободных портов устройства
-	bool hasFreePorts() const; //Проверка на наличие свободных портов
-	bool connectPort(const QString& myPortName, NetworkDevice* otherDevice, const QString& otherPortName); //занять порт подклчением
-	void disconnectPort(const QString& myPortName); //освободить порт
-	bool ping(const QString& targetIp, QStringList& outLog); //Симуляция сетевого Ping (проходит по графу, обучает свитчи, заполняет ARP)
+	QVector<NetworkPort> getFreePorts() const; //Р’РѕР·РІСЂРѕС‰Р°РµС‚ СЃРїРёСЃРѕРє СЃРІРѕР±РѕРґРЅС‹С… РїРѕСЂС‚РѕРІ СѓСЃС‚СЂРѕР№СЃС‚РІР°
+	bool hasFreePorts() const; //РџСЂРѕРІРµСЂРєР° РЅР° РЅР°Р»РёС‡РёРµ СЃРІРѕР±РѕРґРЅС‹С… РїРѕСЂС‚РѕРІ
+	bool connectPort(const QString& myPortName, NetworkDevice* otherDevice, const QString& otherPortName); //Р·Р°РЅСЏС‚СЊ РїРѕСЂС‚ РїРѕРґРєР»С‡РµРЅРёРµРј
+	void disconnectPort(const QString& myPortName); //РѕСЃРІРѕР±РѕРґРёС‚СЊ РїРѕСЂС‚
+	bool ping(const QString& targetIp, QStringList& outLog); //РЎРёРјСѓР»СЏС†РёСЏ СЃРµС‚РµРІРѕРіРѕ Ping (РїСЂРѕС…РѕРґРёС‚ РїРѕ РіСЂР°С„Сѓ, РѕР±СѓС‡Р°РµС‚ СЃРІРёС‚С‡Рё, Р·Р°РїРѕР»РЅСЏРµС‚ ARP)
+	bool configureInterface(int portIndex, const QString& ip, const QString& mask, QString& error);
+	bool configureDefaultGateway(const QString& gateway, int portIndex, QString& error);
+	RouteDecision selectRoute(const QString& destinationIp) const;
+	bool applyConfiguration(const QString& name,const QVector<NetworkPort>& interfaces, const QString& gateway,	int gatewayPort, QString& error);
+	NetworkDevice(const NetworkDevice&) = delete;
+	NetworkDevice& operator=(const NetworkDevice&) = delete;
 
-	//Сеттеры изменяют свойства объекта
+	//РЎРµС‚С‚РµСЂС‹ РёР·РјРµРЅСЏСЋС‚ СЃРІРѕР№СЃС‚РІР° РѕР±СЉРµРєС‚Р°
 	void setName(const QString& name) { m_name = name; }
-	void setIP(const QString& ip) { m_ip = ip; }
 	void setOnline(bool isOnline) { m_isOnline = isOnline; }
 	void setTerminalHistory(const QString& history) { m_terminalHistory = history; }
 
-	bool isConnectedTo(const NetworkDevice* other) const; //Проверка соединения с другим устройством
-	void connectTo(NetworkDevice* other); //Установить соединение с другим устройством
-	void disconnectedFrom(NetworkDevice* other); //Разорвать соединение с другим устройством
+	bool isConnectedTo(const NetworkDevice* other) const; //РџСЂРѕРІРµСЂРєР° СЃРѕРµРґРёРЅРµРЅРёСЏ СЃ РґСЂСѓРіРёРј СѓСЃС‚СЂРѕР№СЃС‚РІРѕРј
+	void connectTo(NetworkDevice* other); //РЈСЃС‚Р°РЅРѕРІРёС‚СЊ СЃРѕРµРґРёРЅРµРЅРёРµ СЃ РґСЂСѓРіРёРј СѓСЃС‚СЂРѕР№СЃС‚РІРѕРј
+	void disconnectedFrom(NetworkDevice* other); //Р Р°Р·РѕСЂРІР°С‚СЊ СЃРѕРµРґРёРЅРµРЅРёРµ СЃ РґСЂСѓРіРёРј СѓСЃС‚СЂРѕР№СЃС‚РІРѕРј
 
 private:
 	static QString generateRandomMac();
-	void initPorts(); //Инициализация портов устройства
+	void initPorts(); //РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РїРѕСЂС‚РѕРІ СѓСЃС‚СЂРѕР№СЃС‚РІР°
 
 	QString m_name;
-	QString m_ip;
-	QString m_mac;
 	QString m_terminalHistory;
 	DeviceType m_type;
 	bool m_isOnline;
-	//QList <NetworkDevice*> m_connectedDevices; //Список подключенных устройств
-	QVector<NetworkPort> m_ports; //Список портов устройства
-	MacTable* m_macTable = nullptr; //Табл. мак для свитча
-	ArpTable* m_arpTable = nullptr; // ARP-кэш (для PC, Server, Router)???????????????????????????????????
+	QString m_defaultGateway;
+	int m_gatewayPortIndex = -1;
+	//QList <NetworkDevice*> m_connectedDevices; //РЎРїРёСЃРѕРє РїРѕРґРєР»СЋС‡РµРЅРЅС‹С… СѓСЃС‚СЂРѕР№СЃС‚РІ
+	QVector<NetworkPort> m_ports; //РЎРїРёСЃРѕРє РїРѕСЂС‚РѕРІ СѓСЃС‚СЂРѕР№СЃС‚РІР°
+	MacTable* m_macTable = nullptr; //РўР°Р±Р». РјР°Рє РґР»СЏ СЃРІРёС‚С‡Р°
+	ArpTable* m_arpTable = nullptr; // ARP-РєСЌС€ (РґР»СЏ PC, Server, Router)???????????????????????????????????
 };
 

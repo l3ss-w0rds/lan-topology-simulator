@@ -1,14 +1,14 @@
-#include "NodeItem.h"
+ï»¿#include "NodeItem.h"
 #include "CableItem.h"
 
 NodeItem::NodeItem(NetworkDevice* device, QGraphicsItem* parent)
     : QGraphicsItem(parent)
     , m_device(device)
 {
-    // Âêëþ÷àåì ôèçèêó ìûøè: òàñêàòü è âûäåëÿòü
+    // Ð’ÐºÐ»ÑŽÑ‡Ð°ÐµÐ¼ Ñ„Ð¸Ð·Ð¸ÐºÑƒ Ð¼Ñ‹ÑˆÐ¸: Ñ‚Ð°ÑÐºÐ°Ñ‚ÑŒ Ð¸ Ð²Ñ‹Ð´ÐµÐ»ÑÑ‚ÑŒ
     setFlag(QGraphicsItem::ItemIsMovable, true);
     setFlag(QGraphicsItem::ItemIsSelectable, true);
-    //Ïðîâîä òÿíåòñÿ çà óçëîì
+    //ÐŸÑ€Ð¾Ð²Ð¾Ð´ Ñ‚ÑÐ½ÐµÑ‚ÑÑ Ð·Ð° ÑƒÐ·Ð»Ð¾Ð¼
     setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
 }
 
@@ -16,8 +16,8 @@ NodeItem::~NodeItem()
 {
     auto cablesCopy = m_cables;
     for (CableItem* cable : cablesCopy) {
-		if (cable->scene()) cable->scene()->removeItem(cable); //Óäàëÿåì êàáåëü ñî ñöåíû, åñëè îí òàì åñòü
-		delete cable; //Óäàëÿåì êàáåëü, êîòîðûé îòâÿçûâàåòñÿ îò óçëîâ â äåñòðóêòîðå CableItem
+		if (cable->scene()) cable->scene()->removeItem(cable); //Ð£Ð´Ð°Ð»ÑÐµÐ¼ ÐºÐ°Ð±ÐµÐ»ÑŒ ÑÐ¾ ÑÑ†ÐµÐ½Ñ‹, ÐµÑÐ»Ð¸ Ð¾Ð½ Ñ‚Ð°Ð¼ ÐµÑÑ‚ÑŒ
+		delete cable; //Ð£Ð´Ð°Ð»ÑÐµÐ¼ ÐºÐ°Ð±ÐµÐ»ÑŒ, ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ð¹ Ð¾Ñ‚Ð²ÑÐ·Ñ‹Ð²Ð°ÐµÑ‚ÑÑ Ð¾Ñ‚ ÑƒÐ·Ð»Ð¾Ð² Ð² Ð´ÐµÑÑ‚Ñ€ÑƒÐºÑ‚Ð¾Ñ€Ðµ CableItem
 	}
     delete m_device;
 }
@@ -31,13 +31,13 @@ void NodeItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
 {
     Q_UNUSED(widget);
     if (!m_device) return;
-    //Ñãëàæèâàíèå
+    //Ð¡Ð³Ð»Ð°Ð¶Ð¸Ð²Ð°Ð½Ð¸Ðµ
     painter->setRenderHint(QPainter::Antialiasing, true);
     painter->setRenderHint(QPainter::TextAntialiasing, true);
-    //Âûäåëåíèå êëèêîì - ñèíèé îðåîë
+    //Ð’Ñ‹Ð´ÐµÐ»ÐµÐ½Ð¸Ðµ ÐºÐ»Ð¸ÐºÐ¾Ð¼ - ÑÐ¸Ð½Ð¸Ð¹ Ð¾Ñ€ÐµÐ¾Ð»
     if (option->state & QStyle::State_Selected) {
         painter->setPen(QPen(QColor(59, 130, 246), 2, Qt::DashLine));
-        painter->setBrush(QColor(59, 130, 246, 30)); // ïîëóïðîçðà÷íûé
+        painter->setBrush(QColor(59, 130, 246, 30)); // Ð¿Ð¾Ð»ÑƒÐ¿Ñ€Ð¾Ð·Ñ€Ð°Ñ‡Ð½Ñ‹Ð¹
         painter->drawRoundedRect(QRectF(-24, -19, 48, 38), 6, 6);
     }
 
@@ -59,21 +59,21 @@ void NodeItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
     }
 
 
-    // ÐÈÑÓÅÌ ÍÀØÓ SVG-ÈÊÎÍÊÓ ÏÎ ÖÅÍÒÐÓ
+    // Ð Ð˜Ð¡Ð£Ð•Ðœ ÐÐÐ¨Ð£ SVG-Ð˜ÐšÐžÐÐšÐ£ ÐŸÐž Ð¦Ð•ÐÐ¢Ð Ð£
     QPixmap iconPixmap = QIcon(iconPath).pixmap(40, 40);
     painter->drawPixmap(-20, -20, iconPixmap);
 
-    // Ðèñóåì òåêñò ïîä ôèãóðîé (Èìÿ è IP)
+    // Ð Ð¸ÑÑƒÐµÐ¼ Ñ‚ÐµÐºÑÑ‚ Ð¿Ð¾Ð´ Ñ„Ð¸Ð³ÑƒÑ€Ð¾Ð¹ (Ð˜Ð¼Ñ Ð¸ IP)
     QFont font = painter->font();
     font.setPointSize(7);
     font.setBold(true);
     painter->setFont(font);
-    painter->setPen(QColor(15, 23, 42)); // Òåìíî-ñåðûé òåêñò
+    painter->setPen(QColor(15, 23, 42)); // Ð¢ÐµÐ¼Ð½Ð¾-ÑÐµÑ€Ñ‹Ð¹ Ñ‚ÐµÐºÑÑ‚
 
-    // Èìÿ óñòðîéñòâà (PC1, Switch1...)
+    // Ð˜Ð¼Ñ ÑƒÑÑ‚Ñ€Ð¾Ð¹ÑÑ‚Ð²Ð° (PC1, Switch1...)
     painter->drawText(QRectF(-35, 23, 70, 12), Qt::AlignCenter, m_device->getName());
 
-    // IP-àäðåñ (ñåðûì öâåòîì ÷óòü íèæå)
+    // IP-Ð°Ð´Ñ€ÐµÑ (ÑÐµÑ€Ñ‹Ð¼ Ñ†Ð²ÐµÑ‚Ð¾Ð¼ Ñ‡ÑƒÑ‚ÑŒ Ð½Ð¸Ð¶Ðµ)
     font.setBold(false);
     font.setPointSize(6);
     painter->setFont(font);

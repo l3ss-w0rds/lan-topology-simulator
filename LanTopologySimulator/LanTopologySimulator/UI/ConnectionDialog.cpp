@@ -77,18 +77,3 @@ void ConnectionDialog::setupUI(NetworkDevice* dev1, NetworkDevice* dev2)
 
     mainLayout->addWidget(buttonBox);
 }
-
-CableType ConnectionDialog::getSelectedCableType() const
-{
-    return static_cast<CableType>(m_cableTypeCombo->currentData().toInt());
-}
-
-QString ConnectionDialog::getSelectedPort1() const
-{
-    return m_port1Combo->currentText();
-}
-
-QString ConnectionDialog::getSelectedPort2() const
-{
-    return m_port2Combo->currentText();
-}

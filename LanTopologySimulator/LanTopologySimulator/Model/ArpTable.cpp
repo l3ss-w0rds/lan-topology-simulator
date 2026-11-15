@@ -1,4 +1,4 @@
-#include "ArpTable.h"
+ï»¿#include "ArpTable.h"
 
 ArpTable::ArpTable(int ttlSeconds)
     : m_ttlSeconds(ttlSeconds)
@@ -12,10 +12,10 @@ void ArpTable::addEntry(const QString& ip, const QString& mac, ArpEntryType type
     QString cleanIP = ip.trimmed();
     QString cleanMAC = mac.trimmed().toUpper();
 
-    //Åñëè çàïèñü äëÿ ýòîãî IP óæå åñòü — îáíîâëÿåì MAC è âðåìÿ
+    //Ð•ÑÐ»Ð¸ Ð·Ð°Ð¿Ð¸ÑÑŒ Ð´Ð»Ñ ÑÑ‚Ð¾Ð³Ð¾ IP ÑƒÐ¶Ðµ ÐµÑÑ‚ÑŒ â€” Ð¾Ð±Ð½Ð¾Ð²Ð»ÑÐµÐ¼ MAC Ð¸ Ð²Ñ€ÐµÐ¼Ñ
     for (auto& entry : m_entries) {
         if (entry.ip == cleanIP) {
-            // Ñòàòè÷åñêèå çàïèñè íå ïåðåçàïèñûâàþòñÿ äèíàìèêîé
+            // Ð¡Ñ‚Ð°Ñ‚Ð¸Ñ‡ÐµÑÐºÐ¸Ðµ Ð·Ð°Ð¿Ð¸ÑÐ¸ Ð½Ðµ Ð¿ÐµÑ€ÐµÐ·Ð°Ð¿Ð¸ÑÑ‹Ð²Ð°ÑŽÑ‚ÑÑ Ð´Ð¸Ð½Ð°Ð¼Ð¸ÐºÐ¾Ð¹
             if (entry.type == ArpEntryType::Static && type == ArpEntryType::Dynamic) {
                 return;
             }
@@ -26,7 +26,7 @@ void ArpTable::addEntry(const QString& ip, const QString& mac, ArpEntryType type
         }
     }
 
-    //Èíà÷å äîáàâëÿåì íîâóþ çàïèñü
+    //Ð˜Ð½Ð°Ñ‡Ðµ Ð´Ð¾Ð±Ð°Ð²Ð»ÑÐµÐ¼ Ð½Ð¾Ð²ÑƒÑŽ Ð·Ð°Ð¿Ð¸ÑÑŒ
     ArpEntry newEntry;
     newEntry.ip = cleanIP;
     newEntry.mac = cleanMAC;
@@ -41,10 +41,10 @@ QString ArpTable::lookupMac(const QString& ip) const
     QString cleanIP = ip.trimmed();
     for (const auto& entry : m_entries) {
         if (entry.ip == cleanIP) {
-            return entry.mac; // Íàøëè ãîòîâûé MAC-àäðåñ!
+            return entry.mac; // ÐÐ°ÑˆÐ»Ð¸ Ð³Ð¾Ñ‚Ð¾Ð²Ñ‹Ð¹ MAC-Ð°Ð´Ñ€ÐµÑ!
         }
     }
-    return ""; // Â êýøå íåò, íóæíî ñëàòü øèðîêîâåùàòåëüíûé ARP-çàïðîñ
+    return ""; // Ð’ ÐºÑÑˆÐµ Ð½ÐµÑ‚, Ð½ÑƒÐ¶Ð½Ð¾ ÑÐ»Ð°Ñ‚ÑŒ ÑˆÐ¸Ñ€Ð¾ÐºÐ¾Ð²ÐµÑ‰Ð°Ñ‚ÐµÐ»ÑŒÐ½Ñ‹Ð¹ ARP-Ð·Ð°Ð¿Ñ€Ð¾Ñ
 }
 
 bool ArpTable::hasEntry(const QString& ip) const
@@ -55,7 +55,7 @@ bool ArpTable::hasEntry(const QString& ip) const
 void ArpTable::cleanExpired()
 {
     QDateTime now = QDateTime::currentDateTime();
-    // Óäàëÿåì äèíàìè÷åñêèå çàïèñè, êîòîðûå æèâóò äîëüøå m_ttlSeconds
+    // Ð£Ð´Ð°Ð»ÑÐµÐ¼ Ð´Ð¸Ð½Ð°Ð¼Ð¸Ñ‡ÐµÑÐºÐ¸Ðµ Ð·Ð°Ð¿Ð¸ÑÐ¸, ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ðµ Ð¶Ð¸Ð²ÑƒÑ‚ Ð´Ð¾Ð»ÑŒÑˆÐµ m_ttlSeconds
     for (int i = m_entries.size() - 1; i >= 0; --i) {
         if (m_entries[i].type == ArpEntryType::Dynamic) {
             if (m_entries[i].timestamp.secsTo(now) > m_ttlSeconds) {
