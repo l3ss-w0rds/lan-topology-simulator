@@ -8,85 +8,7 @@ LanTopologySimulator::LanTopologySimulator(QWidget *parent)
     : QMainWindow(parent)
 {
     ui.setupUi(this);
-
-	this->setStyleSheet(R"(
-        /* Общий шрифт приложения */
-        QWidget {
-            font-family: 'Segoe UI', -apple-system, sans-serif;
-            font-size: 13px;
-        }
-
-        /* Боковая панель "Склад и управление" */
-        QGroupBox {
-            font-weight: bold;
-            font-size: 12px;
-            color: #475569;
-            border: 1px solid #E2E8F0;
-            border-radius: 8px;
-            margin-top: 10px;
-            padding-top: 15px;
-            background-color: #FAFAFA;
-        }
-        QGroupBox::title {
-            subcontrol-origin: margin;
-            left: 10px;
-            padding: 0 5px;
-        }
-
-        /* Кнопки добавления устройств слева (ПК, Сервер, Коммутатор, Маршрутизатор) */
-        QPushButton {
-            background-color: #FFFFFF;
-            border: 1px solid #CBD5E1;
-            border-radius: 6px;
-            padding: 8px 14px;
-            color: #1E293B;
-            font-weight: 500;
-            text-align: left;
-            margin-bottom: 4px;
-        }
-        QPushButton:hover {
-            background-color: #F1F5F9;
-            border-color: #94A3B8;
-            color: #0F172A;
-        }
-        QPushButton:pressed {
-            background-color: #E2E8F0;
-        }
-
-        /* Верхняя панель инструментов (Toolbar) */
-        QToolBar {
-            background: #FFFFFF;
-            border-bottom: 1px solid #E2E8F0;
-            padding: 4px;
-            spacing: 6px;
-        }
-        QToolButton {
-            border: 1px solid transparent;
-            border-radius: 6px;
-            padding: 6px;
-            background-color: transparent;
-        }
-        QToolButton:hover {
-            background-color: #F1F5F9;
-            border: 1px solid #CBD5E1;
-        }
-        /* Когда инструмент (например, Кабель) нажат/активен */
-        QToolButton:checked {
-            background-color: #EFF6FF;
-            border: 1px solid #3B82F6;
-        }
-
-        /* Окно журнала событий (Лог) */
-        QPlainTextEdit {
-            background-color: #F8FAFC;
-            color: #334155;
-            font-family: 'Consolas', 'Cascadia Code', monospace;
-            font-size: 12px;
-            border: 1px solid #E2E8F0;
-            border-radius: 8px;
-            padding: 8px;
-        }
-    )");
+	   
 	//Делаем кнопки переключаемыми
 	ui.actionCable->setCheckable(true);
 	ui.actionDelete->setCheckable(true);
@@ -99,7 +21,7 @@ LanTopologySimulator::LanTopologySimulator(QWidget *parent)
 
 	ui.canvasView->setDragMode(QGraphicsView::RubberBandDrag); // Включаем рамку выделения со старта!
 	ui.canvasView->setRubberBandSelectionMode(Qt::IntersectsItemShape); // Выделять всё, чего коснулась рамка
-
+	ui.mainToolBar->setIconSize(QSize(24, 24));
 	//Точечная сетка на холсте с созданием сцены
 	const int gridSize = 30; // Шаг 30 px — просторно и удобно
 	QPixmap gridPixmap(gridSize, gridSize);

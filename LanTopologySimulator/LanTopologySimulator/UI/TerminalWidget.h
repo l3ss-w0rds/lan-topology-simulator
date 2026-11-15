@@ -1,32 +1,43 @@
-#pragma once
+п»ї#pragma once
 #include <QWidget>
+#include <QStringList>
 
 class QPlainTextEdit;
 class QLineEdit;
+class QLabel;
 class NetworkDevice;
 
 class TerminalWidget : public QWidget {
+    Q_OBJECT
 public:
     explicit TerminalWidget(NetworkDevice* device, QWidget* parent = nullptr);
     ~TerminalWidget() override = default;
 
-private:
-    void setupUI();        // Вёрстка и стили терминала
-    void handleCommand();  // Слот: срабатывает при нажатии Enter в строке ввода
+protected:
+    bool eventFilter(QObject* obj, QEvent* ev) override;
 
-    void executeCommand(const QString& rawCommand); // Выполнение команды и вывод результата 
-	void cmdHelp(); // Вывод справки по командам
-	void cmdClear(); // Очистка терминала
-	void cmdIpconfig(); // Вывод информации о сетевых интерфейсах
-	void cmdPing(const QStringList& args); // Команда ping
+private slots:
+    void handleCommand();   
+
+private:
+    void setupUI(); //
+    void executeCommand(const QString& rawCommand);
+    void print(const QString& text = QString());   
+    void saveHistory();                            
+    QString promptString() const;                  
+
+    void cmdHelp();
+    void cmdClear();
+    void cmdIpconfig();
+    void cmdPing(const QStringList& tokens);
     void cmdShowMacTable(const QStringList& tokens);
     void cmdArp(const QStringList& tokens);
 
-
 private:
-    NetworkDevice* m_device;
-    QPlainTextEdit* m_outputView = nullptr; // Черный экран вывода
-    QLineEdit* m_inputEdit = nullptr;       // Строка ввода команд
-
-
+    NetworkDevice* m_device = nullptr;
+    QPlainTextEdit* m_outputView = nullptr;   
+    QLineEdit* m_inputEdit = nullptr;
+    QLabel* m_promptLabel = nullptr;
+    QStringList     m_history;
+    int             m_historyPos = 0;
 };

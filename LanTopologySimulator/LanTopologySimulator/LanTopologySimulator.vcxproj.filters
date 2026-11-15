@@ -58,14 +58,14 @@
     <ClCompile Include="UI\DevicePropertiesDialog.cpp">
       <Filter>UI</Filter>
     </ClCompile>
-    <ClCompile Include="UI\TerminalWidget.cpp">
-      <Filter>UI</Filter>
-    </ClCompile>
     <ClCompile Include="Model\MacTable.cpp">
       <Filter>Model</Filter>
     </ClCompile>
     <ClCompile Include="Model\ArpTable.cpp">
       <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\TerminalWidget.cpp">
+      <Filter>UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -81,9 +81,6 @@
     <ClInclude Include="UI\ConnectionDialog.h">
       <Filter>UI</Filter>
     </ClInclude>
-    <ClInclude Include="UI\TerminalWidget.h">
-      <Filter>UI</Filter>
-    </ClInclude>
     <ClInclude Include="Model\MacTable.h">
       <Filter>Model</Filter>
     </ClInclude>
@@ -96,6 +93,9 @@
       <Filter>UI</Filter>
     </QtMoc>
     <QtMoc Include="UI\DevicePropertiesDialog.h">
+      <Filter>UI</Filter>
+    </QtMoc>
+    <QtMoc Include="UI\TerminalWidget.h">
       <Filter>UI</Filter>
     </QtMoc>
   </ItemGroup>

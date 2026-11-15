@@ -1,0 +1,336 @@
+/* ---------- 1. База ---------- */
+QWidget {
+    font-family: "Segoe UI";
+    font-size: 14px;
+    color: #0F172A;
+}
+QMainWindow {
+    background-color: #F1F5F9;
+}
+QDialog {
+    background-color: #FFFFFF;
+}
+QLabel {
+    color: #334155;
+    background: transparent;
+}
+
+/* ---------- 2. Тулбар ---------- */
+QToolBar {
+    background-color: rgba(255, 255, 255, 242);
+    border: none;
+    border-bottom: 1px solid #E2E8F0;
+    padding: 6px 10px;
+    spacing: 6px;
+}
+QToolBar::separator {
+    width: 1px;
+    background-color: #E2E8F0;
+    margin: 4px 6px;
+}
+QToolButton {
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    padding: 5px;
+}
+QToolButton:hover {
+    background-color: #F1F5F9;
+    border-color: #CBD5E1;
+}
+QToolButton:pressed {
+    background-color: #E2E8F0;
+}
+QToolButton:checked {
+    background-color: #EFF6FF;
+    border-color: #2563EB;
+}
+QToolButton:disabled {
+    color: #94A3B8;
+}
+
+/* ---------- 3. Боковая панель (карточка) ---------- */
+QGroupBox {
+    background-color: rgba(255, 255, 255, 214);
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    margin-top: 16px;
+    padding: 18px 10px 10px 10px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #334155;
+}
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    left: 14px;
+    padding: 0 6px;
+    color: #334155;
+}
+
+/* ---------- 4. Кнопки: обычные (диалоги, сообщения) ---------- */
+QPushButton {
+    background-color: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    padding: 7px 18px;
+    color: #0F172A;
+    font-weight: 600;
+    min-height: 20px;
+}
+QPushButton:hover {
+    border-color: #3B82F6;
+    color: #1D4ED8;
+}
+QPushButton:pressed {
+    background-color: #EFF6FF;
+    border-color: #1D4ED8;
+}
+QPushButton:disabled {
+    background-color: #F1F5F9;
+    border-color: #E2E8F0;
+    color: #94A3B8;
+}
+
+/* Кнопки-карточки "добавить устройство" — только внутри боковой панели */
+QGroupBox QPushButton {
+    text-align: left;
+    padding: 10px 14px;
+    border-color: #E2E8F0;
+    border-radius: 10px;
+    margin-bottom: 6px;
+}
+QGroupBox QPushButton:hover {
+    background-color: #FFFFFF;
+    border-color: #3B82F6;
+}
+
+/* Акцентные кнопки: по имени ИЛИ кнопка "по умолчанию" в QDialogButtonBox */
+QPushButton#okButton,
+QPushButton#saveBtn,
+QPushButton#primaryBtn,
+QDialogButtonBox QPushButton[default="true"] {
+    background-color: #2563EB;
+    border: 1px solid #2563EB;
+    color: #FFFFFF;
+    text-align: center;
+}
+QPushButton#okButton:hover,
+QPushButton#saveBtn:hover,
+QPushButton#primaryBtn:hover,
+QDialogButtonBox QPushButton[default="true"]:hover {
+    background-color: #1D4ED8;
+    border-color: #1D4ED8;
+    color: #FFFFFF;
+}
+
+/* Кнопки отмены */
+QPushButton#cancelButton,
+QPushButton#cancelBtn {
+    background-color: #F1F5F9;
+    color: #475569;
+    text-align: center;
+}
+QPushButton#cancelButton:hover,
+QPushButton#cancelBtn:hover {
+    background-color: #E2E8F0;
+    border-color: #CBD5E1;
+    color: #0F172A;
+}
+
+/* ---------- 5. Поля ввода, списки, счётчики ---------- */
+QLineEdit, QSpinBox, QComboBox {
+    background-color: #F8FAFC;
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    padding: 6px 10px;
+    color: #0F172A;
+    selection-background-color: #BFDBFE;
+    selection-color: #0F172A;
+}
+QLineEdit:hover, QSpinBox:hover, QComboBox:hover {
+    border-color: #94A3B8;
+}
+/* Толщина рамки не меняется (1px), поэтому поле не "прыгает" */
+QLineEdit:focus, QSpinBox:focus, QComboBox:focus {
+    border-color: #2563EB;
+    background-color: #FFFFFF;
+}
+QLineEdit:disabled, QSpinBox:disabled, QComboBox:disabled {
+    background-color: #F1F5F9;
+    color: #94A3B8;
+}
+QComboBox QAbstractItemView {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    padding: 4px;
+    outline: 0;
+    selection-background-color: #EFF6FF;
+    selection-color: #1D4ED8;
+}
+
+QCheckBox, QRadioButton {
+    spacing: 8px;
+    color: #334155;
+}
+
+/* ---------- 6. Таблицы (таблица портов в свойствах устройства) ---------- */
+QTableWidget, QTableView {
+    background-color: #FFFFFF;
+    alternate-background-color: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    gridline-color: #F1F5F9;
+    selection-background-color: #EFF6FF;
+    selection-color: #1D4ED8;
+}
+QHeaderView::section {
+    background-color: #F8FAFC;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 10px;
+    border: none;
+    border-bottom: 1px solid #E2E8F0;
+}
+QTableCornerButton::section {
+    background-color: #F8FAFC;
+    border: none;
+}
+
+/* ---------- 7. Вкладки ---------- */
+QTabWidget::pane {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    top: -1px;
+}
+QTabBar::tab {
+    background-color: #F8FAFC;
+    color: #64748B;
+    border: 1px solid transparent;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    padding: 9px 20px;
+    margin-right: 4px;
+    font-size: 13px;
+    font-weight: 600;
+}
+QTabBar::tab:hover {
+    color: #0F172A;
+}
+QTabBar::tab:selected {
+    background-color: #FFFFFF;
+    color: #2563EB;
+    border-color: #E2E8F0;
+    border-bottom-color: #FFFFFF;
+}
+
+/* ---------- 8. Холст сети ---------- */
+QGraphicsView {
+    background-color: transparent;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+}
+
+/* ---------- 9. Журнал событий ---------- */
+QPlainTextEdit#logTextEdit {
+    background-color: rgba(255, 255, 255, 235);
+    color: #1E293B;
+    font-family: "Consolas";
+    font-size: 13px;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    padding: 10px;
+    selection-background-color: #BFDBFE;
+}
+
+/* ---------- 10. Скроллбары ---------- */
+QScrollBar:vertical {
+    background: transparent;
+    width: 8px;
+    margin: 4px 0;
+    border: none;
+}
+QScrollBar::handle:vertical {
+    background: #CBD5E1;
+    min-height: 26px;
+    border-radius: 4px;
+}
+QScrollBar:horizontal {
+    background: transparent;
+    height: 8px;
+    margin: 0 4px;
+    border: none;
+}
+QScrollBar::handle:horizontal {
+    background: #CBD5E1;
+    min-width: 26px;
+    border-radius: 4px;
+}
+QScrollBar::handle:hover {
+    background: #94A3B8;
+}
+QScrollBar::add-line, QScrollBar::sub-line {
+    width: 0;
+    height: 0;
+    border: none;
+}
+QScrollBar::add-page, QScrollBar::sub-page {
+    background: none;
+}
+
+/* ---------- 11. Бейдж MAC-адреса ---------- */
+QLabel#macLabel {
+    background-color: #F1F5F9;
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-family: "Consolas";
+    font-weight: bold;
+    color: #2563EB;
+}
+
+/* ---------- 12. Подсказки ---------- */
+QToolTip {
+    background-color: #FFFFFF;
+    color: #0F172A;
+    border: 1px solid #CBD5E1;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 12px;
+}
+
+/* ---------- 13. Меню ---------- */
+QMenu {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 4px;
+}
+QMenu::item {
+    padding: 6px 22px 6px 12px;
+    border-radius: 4px;
+    color: #0F172A;
+}
+QMenu::item:selected {
+    background-color: #EFF6FF;
+    color: #2563EB;
+}
+QMenu::item:disabled {
+    color: #94A3B8;
+}
+QMenu::separator {
+    height: 1px;
+    background-color: #E2E8F0;
+    margin: 4px 6px;
+}
+
+/* ---------- 14. Строка состояния ---------- */
+QStatusBar {
+    background-color: #FFFFFF;
+    border-top: 1px solid #E2E8F0;
+    color: #64748B;
+    font-size: 12px;
+}
