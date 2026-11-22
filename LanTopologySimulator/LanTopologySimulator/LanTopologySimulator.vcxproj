@@ -63,8 +63,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+  <ItemDefinitionGroup>
     <ClCompile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.\Model;.\Graphics;.\UI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -100,6 +101,7 @@
   <ItemGroup>
     <ClCompile Include="Graphics\CableItem.cpp" />
     <ClCompile Include="Model\ArpTable.cpp" />
+    <ClCompile Include="Model\EthernetSimulator.cpp" />
     <ClCompile Include="Model\MacTable.cpp" />
     <ClCompile Include="Model\NetworkDevice.cpp" />
     <ClCompile Include="Graphics\NodeItem.cpp" />
@@ -126,8 +128,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Model\ArpTable.h" />
+    <ClInclude Include="Model\EthernetFrame.h" />
+    <ClInclude Include="Model\EthernetSimulator.h" />
     <ClInclude Include="Model\Ipv4Utils.h" />
     <ClInclude Include="Model\MacTable.h" />
+    <ClInclude Include="Model\NetworkTypes.h" />
     <ClInclude Include="UI\ConnectionDialog.h" />
     <QtMoc Include="UI\TerminalWidget.h" />
     <QtMoc Include="UI\DevicePropertiesDialog.h" />

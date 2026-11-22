@@ -311,22 +311,16 @@ void LanTopologySimulator::handleCableConnection(NodeItem* clickedNode) {
 		ui.logTextEdit->appendPlainText("[ОШИБКА] Нельзя соединить устройство само с собой.");
 		return;
 	}
+	QString error;
+	if (!NetworkDevice::connectPorts(dev1, port1,
+									 dev2, port2,
+									 cableType, error)) {
+		ui.logTextEdit->appendPlainText(QStringLiteral("[ОШИБКА] ") + error);
 
-	NetworkDevice* dev1 = m_firstCableNode->getDevice();
-	NetworkDevice* dev2 = clickedNode->getDevice();
-
-	if (!dev1->hasFreePorts()) {
-		ui.logTextEdit->appendPlainText(QString("[ОШИБКА] У %1 закончились свободные порты!").arg(dev1->getName()));
-		m_firstCableNode->setSelected(false);
-		m_firstCableNode = nullptr;
+		resetCableState();
 		return;
 	}
-	if (!dev2->hasFreePorts()) {
-		ui.logTextEdit->appendPlainText(QString("[ОШИБКА] У %1 закончились свободные порты!").arg(dev2->getName()));
-		m_firstCableNode->setSelected(false);
-		m_firstCableNode = nullptr;
-		return;
-	}
+
 
 	//Открываем диалог подключения у мышки
 	ConnectionDialog dialog(dev1, dev2, this);

@@ -5,7 +5,7 @@ m_agingTimeSec(agingTimeSec){
 }
 
 QString MacTable::makeKey(const QString& mac, int VlanID) const {
-    return QString("%1:%2").arg(VlanID).arg(mac.toUpper());
+    return QString("%1:%2").arg(VlanID).arg(mac.trimmed().toUpper());
 }
 
 void MacTable::learn(const QString& mac, int portIndex, int VlanID) {
@@ -38,14 +38,15 @@ void MacTable::addStatic(const QString& mac, int portIndex, int VlanID) {
     MacEntry entry;
     entry.VlanID = VlanID;
     entry.macAddress = mac.trimmed().toUpper();
-    entry.type = TypeEntry::Dynamic;
+    entry.type = TypeEntry::Static;
     entry.portIndex = portIndex;
     entry.timestamp = QDateTime::currentDateTime(); //обнуляем таймер старения
     entry.isValid = true;
     m_macTable[key] = entry;
 }
+
 void MacTable::addBlackhole(const QString& mac, int portIndex, int VlanID) {
-    if (mac.isEmpty() || portIndex < 0 || VlanID < 1 || VlanID > 4094) {
+    if (mac.trimmed().isEmpty() || portIndex < -1 || VlanID < 1 || VlanID > 4094){
         qWarning() << "Неправильные параметры для обучения: mac=" << mac << ", portIndex=" << portIndex << ", VlanID=" << VlanID;
         return;
     }
@@ -77,7 +78,6 @@ int MacTable::lookup(const QString& mac, int VlanID)  {
             m_macTable.remove(key); //удаляем устаревший мак
             return -1; //не найден
 		}
-		entry.timestamp = QDateTime::currentDateTime(); //обнул. таймер старения
 	}
     return entry.portIndex; //не найден
 }

@@ -7,9 +7,11 @@
 #include <QQueue>
 #include <QSet>
 #include <QMap>
+
 #include "MacTable.h"
 #include "ArpTable.h"
 #include "Ipv4Utils.h"
+#include "NetworkTypes.h"
 
 enum class DeviceType {
 	PC,
@@ -26,6 +28,7 @@ struct NetworkPort {
 	QString ipv4;
 	QString subnetMask;
 	bool adminUp = true;
+	CableType cableType = CableType::TwistedPair //Среда соединения
 };
 
 enum class RouteDecisionType {
@@ -61,6 +64,7 @@ public:
 	int getPortIndexConnectedTo(NetworkDevice* targetDevice) const; // Возвращает индекс порта, через который мы подключены к целевому устройству. -1 если не подключены напрямую
 	QString getDefaultGateway() const { return m_defaultGateway; }
 	int getGatewayPortIndex() const { return m_gatewayPortIndex; }
+	int getPortIndex (const QString& portName) const; //Поиск порта по имени
 
 	QVector<NetworkPort> getFreePorts() const; //Возврощает список свободных портов устройства
 	bool hasFreePorts() const; //Проверка на наличие свободных портов
@@ -82,10 +86,11 @@ public:
 	bool isConnectedTo(const NetworkDevice* other) const; //Проверка соединения с другим устройством
 	void connectTo(NetworkDevice* other); //Установить соединение с другим устройством
 	void disconnectedFrom(NetworkDevice* other); //Разорвать соединение с другим устройством
-
+	static bool connectPorts(   NetworkDevice* first,	const QString& firstPortName,
+								NetworkDevice* second, const QString& secondPortName,
+								CableType cableType, QString& error); //Проверка и соединения обоих концов
 private:
 	static QString generateRandomMac();
-	void initPorts(); //Инициализация портов устройства
 
 	QString m_name;
 	QString m_terminalHistory;

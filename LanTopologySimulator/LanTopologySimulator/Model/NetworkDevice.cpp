@@ -112,35 +112,131 @@ bool NetworkDevice::connectPort(const QString& myPortName, NetworkDevice* otherD
 }
 
 void NetworkDevice::disconnectPort(const QString& myPortName) {
-	for (auto& port : m_ports) {
-		if (port.name == myPortName && port.isOccupied) {
-			port.isOccupied = false;
-			port.connectedDevice = nullptr;
-			port.connectedPortName = "";
-			return;
-		}
-	}
+	const int portIndex = getPortIndex(myPortName);
+
+	if (portIndex < 0)
+		return;
+
+	auto& port = m_ports[portIndex];
+
+	// Удаляем записи, связанные с отключаемым портом
+	if (m_macTable)
+		m_macTable->removeByPort(portIndex);
+
+	port.isOccupied = false;
+	port.connectedDevice = nullptr;
+	port.connectedPortName.clear();
+	port.cableType = CableType::TwistedPair;
 }
 
 void NetworkDevice::disconnectedFrom(NetworkDevice* other) {
-	if (!other) return;
-	//Освобождаем порт на нашем устрве, который вел к other
-	for (auto& port : m_ports) {
-		if (port.connectedDevice == other) {
-			port.isOccupied = false;
-			port.connectedDevice = nullptr;
-			port.connectedPortName = "";
-		}
+	if (!other)
+		return;
+
+	// Освобождаем наши порты, ведущие к соседу
+	for (int i = 0; i < m_ports.size(); ++i) {
+		if (m_ports[i].connectedDevice == other)
+			disconnectPort(m_ports[i].name);
 	}
-	//Освобождаем порт на other, который вел к нам
-	for (auto& port : other->m_ports) {
-		if (port.connectedDevice == this) {
-			port.isOccupied = false;
-			port.connectedDevice = nullptr;
-			port.connectedPortName = "";
+
+	// Освобождаем порты соседа, ведущие к нам
+	for (int i = 0; i < other->m_ports.size(); ++i) {
+		if (other->m_ports[i].connectedDevice == this)
+			other->disconnectPort(other->m_ports[i].name);
+	}
+
+}
+
+bool NetworkDevice::connectPorts(NetworkDevice* first, const QString& firstPortName,
+								 NetworkDevice* second, const QString& secondPortName,
+								 CableType cableType, QString& error) 
+{
+	error.clear();
+
+	if (!first || !second) {
+		error = QStringLiteral("Не передано устройство.");
+		return false;
+	}
+
+	if (first == second) {
+		error = QStringLiteral("Нельзя соединить устройство само с собой.");
+		return false;
+	}
+
+	const int firstIndex = first->getPortIndex(firstPortName);
+	const int secondIndex = second->getPortIndex(secondPortName);
+
+	if (firstIndex < 0 || secondIndex < 0) {
+		error = QStringLiteral("Не найден выбранный порт.");
+		return false;
+	}
+
+	if (first->m_ports[firstIndex].isOccupied ||
+		second->m_ports[secondIndex].isOccupied) {
+		error = QStringLiteral("Один из портов уже занят.");
+		return false;
+	}
+
+	// Параллельные соединения пока не поддерживаем
+	for (const auto& port : first->m_ports) {
+		if (port.isOccupied && port.connectedDevice == second) {
+			error = QStringLiteral("Эти устройства уже соединены.");
+			return false;
 		}
 	}
 
+	// Без STP запрещаем создание петли между коммутаторами
+	if (supportsEthernet(cableType) &&
+		first->m_type == DeviceType::Switch &&
+		second->m_type == DeviceType::Switch) {
+
+		QQueue<NetworkDevice*> queue;
+		QSet<NetworkDevice*> visited;
+
+		queue.enqueue(first);
+		visited.insert(first);
+
+		while (!queue.isEmpty()) {
+			NetworkDevice* current = queue.dequeue();
+
+			if (current == second) {
+				error = QStringLiteral(
+					"Соединение создаёт L2-петлю. STP пока не реализован.");
+				return false;
+			}
+
+			for (const auto& port : current->m_ports) {
+				NetworkDevice* neighbor = port.connectedDevice;
+
+				if (!port.isOccupied ||
+					!supportsEthernet(port.cableType) ||
+					!neighbor ||
+					neighbor->m_type != DeviceType::Switch ||
+					visited.contains(neighbor)) {
+					continue;
+				}
+
+				visited.insert(neighbor);
+				queue.enqueue(neighbor);
+			}
+		}
+	}
+
+	// Все проверки пройдены — занимаем оба порта
+	auto& firstPort = first->m_ports[firstIndex];
+	auto& secondPort = second->m_ports[secondIndex];
+
+	firstPort.isOccupied = true;
+	firstPort.connectedDevice = second;
+	firstPort.connectedPortName = secondPortName;
+	firstPort.cableType = cableType;
+
+	secondPort.isOccupied = true;
+	secondPort.connectedDevice = first;
+	secondPort.connectedPortName = firstPortName;
+	secondPort.cableType = cableType;
+
+	return true;
 }
 
 int NetworkDevice::getPortIndexConnectedTo(NetworkDevice* targetDevice) const
@@ -149,6 +245,14 @@ int NetworkDevice::getPortIndexConnectedTo(NetworkDevice* targetDevice) const
 		if (m_ports[i].isOccupied && m_ports[i].connectedDevice == targetDevice) {
 			return i;
 		}
+	}
+	return -1;
+}
+
+int NetworkDevice::getPortIndex(const QString& portName) const {
+	for (int i = 0; i < m_ports.size(); ++i) {
+		if (m_ports[i].name == portName)
+			return i;
 	}
 	return -1;
 }

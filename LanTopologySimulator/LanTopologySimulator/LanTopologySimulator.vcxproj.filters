@@ -67,6 +67,9 @@
     <ClCompile Include="UI\TerminalWidget.cpp">
       <Filter>UI</Filter>
     </ClCompile>
+    <ClCompile Include="Model\EthernetSimulator.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Model\NetworkDevice.h">
@@ -90,6 +93,15 @@
     <ClInclude Include="Model\Ipv4Utils.h">
       <Filter>Model</Filter>
     </ClInclude>
+    <ClInclude Include="Model\NetworkTypes.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\EthernetFrame.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\EthernetSimulator.h">
+      <Filter>Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="UI\LanTopologySimulator.h">
@@ -106,7 +118,7 @@
     <QtUic Include="UI\LanTopologySimulator.ui">
       <Filter>UI</Filter>
     </QtUic>
-    <QtUic Include="DevicePropertiesDialog.ui">
+    <QtUic Include="UI\DevicePropertiesDialog.ui">
       <Filter>UI</Filter>
     </QtUic>
   </ItemGroup>

@@ -2,16 +2,11 @@
 #include <QGraphicsItem>
 #include <QPen>
 #include <QFontMetrics>
+#include "NetworkTypes.h"
 
 
 class NodeItem;
 
-enum class CableType{
-TwistedPair, //Витая пара(Медь, 1Гб/с, черный)
-OpticalFiber, //Оптоволокно (10Гб/с, оранжевый)
-CoaxialCable, //Коаксиалка (темно-синий)
-ConsoleCable //Консольный (голубой)
-};
 class CableItem : public QGraphicsLineItem {
 	public:
 		CableItem(NodeItem* startNode, NodeItem* endNode, CableType type,
